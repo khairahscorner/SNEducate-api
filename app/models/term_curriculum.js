@@ -1,13 +1,12 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
-const Goal = require('./goal');
 const Student = require('./student');
 
-class TermCurriculum extends Model {
+class Term_Curriculum extends Model {
     // can define methods here that can be used for easy field access in the controllers
 }
 
-TermCurriculum.init({
+Term_Curriculum.init({
     iep_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -22,10 +21,10 @@ TermCurriculum.init({
     }
 }, {
     sequelize,
-    modelName: 'TermCurriculum'
+    modelName: 'Term_Curriculum'
 });
 
-TermCurriculum.belongsTo(Student, { foreignKey: 'student_id', targetKey: 'student_id' });
-TermCurriculum.hasMany(Goal, { foreignKey: 'iep_id', sourceKey: 'iep_id' });
+Term_Curriculum.belongsTo(Student, { foreignKey: 'student_id', targetKey: 'student_id' });
+Student.hasMany(Term_Curriculum, { foreignKey: 'student_id', sourceKey: 'student_id' });
 
-module.exports = TermCurriculum;
+module.exports = Term_Curriculum;

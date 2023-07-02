@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../../config/database");
+const School = require('./school');
 const User = require('./user')
 
 class Staff extends User {
@@ -30,5 +31,6 @@ Staff.beforeCreate((staff) => {
 
 Staff.belongsTo(User, { foreignKey: 'staff_id', targetKey: 'user_id' });
 Staff.belongsTo(School, { foreignKey: 'school_id', targetKey: 'school_id' });
+School.hasMany(Staff, { foreignKey: 'school_id', sourceKey: 'school_id' });
 
 module.exports = Staff;

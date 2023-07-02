@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
 const Goal = require('./goal');
 
@@ -22,5 +22,6 @@ Target.init({
 });
 
 Target.belongsTo(Goal, { foreignKey: 'goal_id', targetKey: 'goal_id' });
+Goal.hasMany(Target, { foreignKey: 'goal_id', sourceKey: 'goal_id' });
 
 module.exports = Target;

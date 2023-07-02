@@ -1,6 +1,5 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
-const Target = require('./target');
 const TermCurriculum = require('./term_curriculum');
 
 class Goal extends Model {
@@ -25,6 +24,6 @@ Goal.init({
 });
 
 Goal.belongsTo(TermCurriculum, { foreignKey: 'iep_id', targetKey: 'iep_id' });
-Goal.hasMany(Target, { foreignKey: 'goal_id', sourceKey: 'goal_id' });
+TermCurriculum.hasMany(Goal, { foreignKey: 'iep_id', sourceKey: 'iep_id' });
 
 module.exports = Goal;

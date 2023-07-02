@@ -1,7 +1,6 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
-const Assessment = require('./assessment');
-const TermCurriculum = require('./term_curriculum');
+const Staff = require('./staff');
 
 class Student extends Model {
     // can define methods here that can be used for easy field access in the controllers
@@ -23,7 +22,5 @@ Student.init({
 });
 
 Student.belongsTo(Staff, { foreignKey: 'staff_id', targetKey: 'staff_id' });
-Student.hasMany(TermCurriculum, { foreignKey: 'student_id', sourceKey: 'student_id' });
-Student.hasMany(Assessment, { foreignKey: 'student_id', sourceKey: 'student_id' });
-
+Staff.hasMany(Student, { foreignKey: 'staff_id', sourceKey: 'staff_id' })
 module.exports = Student;

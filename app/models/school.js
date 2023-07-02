@@ -1,6 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
-const SchoolAdmin = require('./school_admin');
 
 class School extends Model {
     // can define methods here that can be used for easy field access in the controllers
@@ -44,8 +43,5 @@ School.init({
     sequelize,
     modelName: 'School'
 });
-
-School.hasOne(SchoolAdmin, { foreignKey: 'school_id', sourceKey: 'school_id' });
-School.hasMany(Staff, { foreignKey: 'school_id', sourceKey: 'school_id' });
 
 module.exports = School;
