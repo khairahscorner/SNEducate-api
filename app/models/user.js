@@ -34,8 +34,7 @@ User.init({
     user_type: {
         type: DataTypes.ENUM,
         values: ['dev', 'school_admin', 'staff'],
-        defaultValue: "dev",
-        allowNull: false
+        defaultValue: "dev"
     }
 }, {
     sequelize,

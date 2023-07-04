@@ -34,8 +34,9 @@ School.init({
         allowNull: false
     },
     framework: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER,
+        defaultValue: 3,
+        // allowNull: false
     },
     website: DataTypes.STRING,
     terms_private: DataTypes.STRING,

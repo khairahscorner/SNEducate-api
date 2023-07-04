@@ -8,20 +8,19 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const authRouter = require('./routes/authroutes')
+const allRoutes = require('./routes/routes')
 const port = process.env.PORT || 3000;
 
 app.use(cors);
 connection();
-app.use('/api', authRouter);
-
+app.use('/api', allRoutes);
 
 app.listen(port, () => {
     console.log("Server is listening")
 })
-// app.get('/books/:id', getBookById);
-
 
 app.get("/", (req, res) => {
-    res.status(200).send("works");
+    res.status(200).json({
+        message: "SNEducate API"
+    });
 });

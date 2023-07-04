@@ -19,14 +19,16 @@ School_Admin.init({
     },
     first_name: { type: DataTypes.STRING, allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
-    role: { type: DataTypes.STRING, allowNull: false }
+    role: { type: DataTypes.STRING, allowNull: false },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    }
 }, {
     sequelize,
     modelName: 'School_Admin',
     hooks: {
-        beforeCreate: (admin) => {
-            admin.user_type = 'school_admin';
-        }
+        beforeCreate: (admin) => { }
     }
 });
 

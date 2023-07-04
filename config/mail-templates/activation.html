@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to SNEducate</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Welcome to SNEducate</h1>
+  </div>
+  <div class="content">
+    <p>Hello,</p>
+    <p>An account has been created for you as a {{userType}} for <strong>{{schoolName}}</strong>.</p>
+    <p>Your login details are:</p>
+    <ul>
+      <li>Email: <strong>{{email}}</strong></li>
+      <li>Password: <strong>{{password}}</strong></li>
+    </ul>
+    <p>Please change your password before you can have access to the application. You can change your password by clicking the link below:</p>
+    <p><a href="{{activationLink}}">Change Password</a></p>
+  </div>
+  <div class="footer">
+    <p>Thank you for using SNEducate!</p>
+  </div>
+</body>
+</html>
