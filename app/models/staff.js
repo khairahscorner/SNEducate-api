@@ -13,8 +13,8 @@ Staff.init({
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'Users',
-          key: 'user_id'
+            model: 'Users',
+            key: 'id'
         }
     },
     first_name: { type: DataTypes.STRING, allowNull: false },
@@ -22,14 +22,15 @@ Staff.init({
     position: { type: DataTypes.STRING, allowNull: false }
 }, {
     sequelize,
-    modelName: 'Staff'
+    modelName: 'Staff',
+    hooks: {
+        beforeCreate: (staff) => {
+            staff.user_type = 'staff';
+        }
+    }
 });
 
-Staff.beforeCreate((staff) => {
-    staff.user_type = 'staff';
-});
-
-Staff.belongsTo(User, { foreignKey: 'staff_id', targetKey: 'user_id' });
+Staff.belongsTo(User, { foreignKey: 'staff_id', targetKey: 'id' });
 Staff.belongsTo(School, { foreignKey: 'school_id', targetKey: 'school_id' });
 School.hasMany(Staff, { foreignKey: 'school_id', sourceKey: 'school_id' });
 

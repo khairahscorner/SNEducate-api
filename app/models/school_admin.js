@@ -13,8 +13,8 @@ School_Admin.init({
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'Users',
-          key: 'user_id'
+            model: 'Users',
+            key: 'id'
         }
     },
     first_name: { type: DataTypes.STRING, allowNull: false },
@@ -22,14 +22,15 @@ School_Admin.init({
     role: { type: DataTypes.STRING, allowNull: false }
 }, {
     sequelize,
-    modelName: 'School_Admin'
+    modelName: 'School_Admin',
+    hooks: {
+        beforeCreate: (admin) => {
+            admin.user_type = 'school_admin';
+        }
+    }
 });
 
-School_Admin.beforeCreate((admin) => {
-    admin.user_type = 'school_admin';
-});
-
-School_Admin.belongsTo(User, { foreignKey: 'admin_id', targetKey: 'user_id' });
+School_Admin.belongsTo(User, { foreignKey: 'admin_id', targetKey: 'id' });
 School_Admin.belongsTo(School, { foreignKey: 'school_id', targetKey: 'school_id' });
 School.hasOne(School_Admin, { foreignKey: 'school_id', sourceKey: 'school_id' });
 

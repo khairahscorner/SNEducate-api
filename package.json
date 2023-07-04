@@ -19,11 +19,15 @@
   },
   "homepage": "https://github.com/khairahscorner/SNEducate-api#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.4.0",
+    "nodemailer": "^6.9.3",
     "sequelize": "^6.11.0"
   },
   "devDependencies": {

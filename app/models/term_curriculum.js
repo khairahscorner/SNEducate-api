@@ -10,6 +10,7 @@ Term_Curriculum.init({
     iep_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
         allowNull: false
     },
     academic_year: { type: DataTypes.STRING, allowNull: false },

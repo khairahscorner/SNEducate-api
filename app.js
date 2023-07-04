@@ -3,13 +3,17 @@ const express = require("express");
 const app = express();
 const cors = require('./config/cors');
 const connection = require('./app/middleware/database');
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const authRouter = require('./routes/authroutes')
 const port = process.env.PORT || 3000;
 
 app.use(cors);
 connection();
-app.use('/user', authRouter);
+app.use('/api', authRouter);
 
 
 app.listen(port, () => {

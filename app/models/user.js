@@ -1,18 +1,30 @@
 const { DataTypes, Model } = require('sequelize');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const sequelize = require("../../config/database");
 
 class User extends Model {
     // can define methods here that can be used for easy field access in the controllers
+    async generateToken() {
+        return jwt.sign(
+            { userId: this.id, userType: this.user_type },
+            process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: "24h",
+            }
+        );
+    }
+
+    async verifyPassword(password) {
+        const isPasswordCorrect = await bcrypt.compare(password, this.password);
+        return isPasswordCorrect;
+    }
 }
 
 User.init({
-    user_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false
-    },
     email: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false
     },
     password: {
@@ -27,7 +39,25 @@ User.init({
     }
 }, {
     sequelize,
-    modelName: 'User'
+    modelName: 'User',
+    hooks: {
+        beforeCreate: async (user) => {
+            if (user.password) {
+                const saltRounds = 10;
+                const salt = await bcrypt.genSalt(saltRounds);
+                const hashedPassword = await bcrypt.hash(user.password, salt);
+                user.password = hashedPassword;
+            }
+        },
+        beforeUpdate: async (user) => {
+            if (user.password) {
+                const saltRounds = 10;
+                const salt = await bcrypt.genSalt(saltRounds);
+                const hashedPassword = await bcrypt.hash(user.password, salt);
+                user.password = hashedPassword;
+            }
+        },
+    }
 });
 
 module.exports = User;
