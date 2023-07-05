@@ -20,10 +20,6 @@ School_Admin.init({
     first_name: { type: DataTypes.STRING, allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.STRING, allowNull: false },
-    isVerified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    }
 }, {
     sequelize,
     modelName: 'School_Admin',

@@ -7,10 +7,10 @@ class User extends Model {
     // can define methods here that can be used for easy field access in the controllers
     async generateToken() {
         return jwt.sign(
-            { userId: this.id, userType: this.user_type },
+            { userId: this.id, userType: this.user_type, isVerified: this.isVerified },
             process.env.JWT_SECRET_KEY,
             {
-                expiresIn: "24h",
+                expiresIn: "6h",
             }
         );
     }
@@ -35,6 +35,10 @@ User.init({
         type: DataTypes.ENUM,
         values: ['dev', 'school_admin', 'staff'],
         defaultValue: "dev"
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize,

@@ -61,6 +61,51 @@ const login = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    // user object added to req from decoding token via middleware
+    const { userId, isVerified } = req.user;
+    const {oldPassword, newPassword } = req.body;
+    try {
+        const user = await User.findOne({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Error changing password - No user found",
+                data: {
+                    userId
+                }
+            });
+        }
+
+        const isCurrPasswordValid = await user.verifyPassword(oldPassword);
+        if (!isCurrPasswordValid) {
+            return res.json({
+                message: "Cannot update password - incorrect password",
+            });
+        }
+
+        user.password = newPassword;
+        if(!isVerified) {
+            user.isVerified = true;
+        }
+        await user.save();
+
+        return res.json({
+            message: "Successfully changed password",
+            data: {
+                ...user.dataValues
+            }
+        });
+    } catch (error) {
+        return res.status(500).send({ message: "Internal server error", error });
+    }
+
+}
+
 const deleteUser = async (req, res) => {
     const id = req.params.id;
     try {
@@ -95,4 +140,4 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { login, createNewUser, deleteUser };
+module.exports = { login, createNewUser, changePassword, deleteUser };

@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const SchoolAdmin = require('../models/school_admin');
 const { generateRandomPassword } = require('../middleware/auth');
@@ -36,8 +37,14 @@ const createNewAdmin = async (req, res) => {
                 admin_id: newUser.dataValues.id,
                 school_id: schoolId
             });
+
             if (newAdmin) {
-                let token = await newAdmin.generateToken();
+                let token = await generateActivationToken({
+                    userId: newUser.dataValues.id,
+                    userType: newUser.dataValues.user_type,
+                    isVerified: newUser.dataValues.isVerified
+                });
+
                 let mailOptions = {
                     userType: newUser.user_type === "staff" ? "staff" : "school administrator",
                     activationLink: `${process.env.BASE_FRONTEND_URL}/verify/${token}`,
@@ -81,5 +88,15 @@ const createNewAdmin = async (req, res) => {
 //         return res.status(500).send({ message: error });
 //     }
 // };
+
+const generateActivationToken = async ({ userId, userType, isVerified }) => {
+    return jwt.sign(
+        { userId, userType, isVerified },
+        process.env.JWT_SECRET_KEY,
+        // { // no expiration
+        //     expiresIn: "24h",
+        // }
+    );
+}
 
 module.exports = { createNewAdmin };
