@@ -24,6 +24,25 @@ const userExists = async (req, res, next) => {
     }
 };
 
+const isUserActivated = async (req, res, next) => {
+    const { isVerified } = req.user;
+    try {
+        if (!isVerified) {
+            return res.status(400).json({
+                message: `User has not activated their account `,
+                data: {
+                    userId: req.user.userId
+                }
+            });
+        }
+        next();
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).send({ message: "Internal server error", error });
+    }
+};
+
 const verifyToken = async (req, res, next) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
@@ -40,16 +59,16 @@ const verifyToken = async (req, res, next) => {
 
 const generateRandomPassword = () => {
     const passwordOptions = {
-      numbers: true,
-      lowercase: true,
-      uppercase: true,
+        numbers: true,
+        lowercase: true,
+        uppercase: true,
     };
     return generate.generate(passwordOptions);
-  }
-  
+}
 
 module.exports = {
     userExists,
+    isUserActivated,
     verifyToken,
     generateRandomPassword,
 };
