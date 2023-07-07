@@ -14,7 +14,8 @@ School.init({
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     address: {
         type: DataTypes.STRING,
@@ -31,7 +32,8 @@ School.init({
     },
     shortcode: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     framework: {
         type: DataTypes.INTEGER,

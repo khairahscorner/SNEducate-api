@@ -1,6 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require("../../config/database");
-const Goal = require('./goal');
 
 class Target extends Model {
     // can define methods here that can be used for easy field access in the controllers
@@ -21,8 +20,5 @@ Target.init({
     sequelize,
     modelName: 'Target'
 });
-
-Target.belongsTo(Goal, { foreignKey: 'goal_id', targetKey: 'goal_id' });
-Goal.hasMany(Target, { foreignKey: 'goal_id', sourceKey: 'goal_id' });
 
 module.exports = Target;

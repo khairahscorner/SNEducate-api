@@ -28,8 +28,4 @@ School_Admin.init({
     }
 });
 
-School_Admin.belongsTo(User, { foreignKey: 'admin_id', targetKey: 'id' });
-School_Admin.belongsTo(School, { foreignKey: 'school_id', targetKey: 'school_id' });
-School.hasOne(School_Admin, { foreignKey: 'school_id', sourceKey: 'school_id' });
-
 module.exports = School_Admin;
