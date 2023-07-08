@@ -1,5 +1,7 @@
+const { Op } = require('sequelize');
 const School = require('../models/school');
 const School_Admin = require('../models/school_admin');
+const Staff = require('../models/staff');
 const User = require('../models/user');
 
 const createSchool = async (req, res) => {
@@ -57,15 +59,15 @@ const updateSchool = async (req, res) => {
                 data: result.dataValues
             });
         })
-        .catch(() => {
-            return res.status(400).json({
-                message: "Could not update school details",
-                data: {
-                    schoolId,
-                    ...req.body
-                }
+            .catch(() => {
+                return res.status(400).json({
+                    message: "Could not update school details",
+                    data: {
+                        schoolId,
+                        ...req.body
+                    }
+                })
             })
-        })
     } catch (error) {
         return res.status(500).send({ message: "Internal server error", error });
     }
@@ -140,38 +142,36 @@ const deleteSchool = async (req, res) => {
                 }
             });
         }
-        const hasAdmin = await school.getSchool_Admin();
 
-        if (hasAdmin !== null) {
-            // delete user association first, which also deletes the school admin
-            User.destroy({
-                where: {
-                    id: hasAdmin?.admin_id
-                }
-            })
-                .catch(() => {
-                    return res.status(500).json({
-                        message: "Internal server error",
-                        error: "Could not delete user - school admin"
-                    });
-                });
-        }
-        const result = await School.destroy({
+        let staffResults = await school.getStaffs()
+        staffIds = staffResults.map((staff) => staff.dataValues.staff_id);
+        let adminResult = await school.getSchool_Admin();
+        let adminId = adminResult.dataValues.admin_id;
+
+        await User.destroy({
             where: {
-                school_id: id
-            }
-        });
-
-        if (result > 0) {
-            return res.status(200).json({
-                message: "Successfully deleted school and all associated user (school admin) accounts",
-                data: {
-                    ...school.dataValues,
-                    adminDetails: hasAdmin
+                id: {
+                    [Op.in]: staffIds,
                 }
+            },
+        })
+        if (adminId) {
+            await User.destroy({
+                where: {
+                    id: adminId,
+                },
             });
         }
 
+        await school.destroy();
+        return res.status(200).json({
+            message: "Successfully deleted school and all associated user (school admin) accounts",
+            data: {
+                ...school.dataValues,
+                adminId,
+                staffIds
+            }
+        });
     } catch (error) {
         return res.status(500).send({ message: "Internal server error", error });
     }
