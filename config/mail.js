@@ -25,18 +25,15 @@ exports.sendActivationEmail = async (details) => {
         html = html.replace('{{password}}', details.password);
         html = html.replace('{{activationLink}}', details.activationLink);
 
-        transporter.sendMail({
+        await transporter.sendMail({
             from: process.env.OUTLOOK_EMAIL,
             to: details.email,
             subject: 'New Account - SNEducate',
             html,
-        }, (err, info) => {
-            if (err) {
-                console.log(err);
-                return res.status(400).json({ message: err });
-            } else console.log(info)
-        });
+        })
+        console.log('Email sent successfully');
     } catch (error) {
-        return res.status(500).json({ message: 'Error sending verification email:' });
+        console.log(error);
+        throw new Error('Error sending verification email');
     }
 };

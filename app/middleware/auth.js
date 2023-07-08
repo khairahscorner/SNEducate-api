@@ -3,7 +3,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const generate = require('generate-password');
 
-const userExists = async (req, res, next) => {
+const doesEmailExists = async (req, res, next) => {
     try {
         const user = await User.findOne({
             where: {
@@ -12,7 +12,7 @@ const userExists = async (req, res, next) => {
         });
         if (user) {
             return res.status(400).json({
-                message: `User already exists`,
+                message: `A user already exists with the same email`,
                 data: req.body.email
             });
         }
@@ -67,7 +67,7 @@ const generateRandomPassword = () => {
 }
 
 module.exports = {
-    userExists,
+    doesEmailExists,
     isUserActivated,
     verifyToken,
     generateRandomPassword,
