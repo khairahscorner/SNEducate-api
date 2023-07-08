@@ -41,29 +41,22 @@ School.init({
         // allowNull: false
     },
     website: DataTypes.STRING,
-    terms_private: {
-        type: DataTypes.STRING,
-        validate: {
-            requiredIfTypeIsPrivate: function (val) {
-                if (this.type === 'private' && !val) {
-                    throw new Error('terms_private required if school typeis= "private"');
-                }
-            },
-        },
-    },
-    terms_school: {
-        type: DataTypes.JSON,
-        validate: {
-            requiredIfTypeIsSchool: function (val) {
-                if (this.type === 'school' && !val) {
-                    throw new Error('terms_school required if school type is "school"');
-                }
-            },
-        },
-    }
+    terms_private: DataTypes.STRING,
+    terms_school: DataTypes.JSON
 }, {
     sequelize,
-    modelName: 'School'
+    modelName: 'School',
+    validate: {
+        validateRequiredFields() {
+            if (this.type === 'private' && !this.terms_private) {
+                throw new Error('terms_private is required if school type is "private"');
+            }
+
+            if (this.type === 'school' && !this.terms_school) {
+                throw new Error('terms_school is required if school type is "school"');
+            }
+        },
+    },
 });
 
 module.exports = School;
