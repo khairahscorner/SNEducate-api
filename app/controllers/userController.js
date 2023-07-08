@@ -1,5 +1,6 @@
 const User = require('../models/user');
 
+// only to directly create root admins - devs for the platform
 const createNewUser = async (req, res) => {
     const { email, password, } = req.body;
     try {
@@ -42,14 +43,19 @@ const login = async (req, res) => {
 
         const isPasswordValid = await user.verifyPassword(password);
         if (!isPasswordValid) {
-            return res.json({
+            return res.status(400).json({
                 message: "Incorrect login details: password",
+            });
+        }
+        // no need for verification for root admin - dev accounts (ME)
+        if (user.user_type !== "dev" && !user.isVerified) {
+            return res.status(401).json({
+                message: `Unable to login, please activate your account first via the email sent to you from ${process.env.OUTLOOK_EMAIL}`,
             });
         }
 
         const userToken = await user.generateToken();
-
-        return res.json({
+        return res.status(200).json({
             message: "Successfully logged in",
             data: {
                 ...user.dataValues,
@@ -64,7 +70,7 @@ const login = async (req, res) => {
 const changePassword = async (req, res) => {
     // user object added to req from decoding token via middleware
     const { userId, isVerified } = req.user;
-    const {oldPassword, newPassword } = req.body;
+    const { oldPassword, newPassword } = req.body;
     try {
         const user = await User.findOne({
             where: {
@@ -89,7 +95,7 @@ const changePassword = async (req, res) => {
         }
 
         user.password = newPassword;
-        if(!isVerified) {
+        if (!isVerified) {
             user.isVerified = true;
         }
         await user.save();
@@ -124,7 +130,8 @@ const deleteUser = async (req, res) => {
         const result = await User.destroy({
             where: {
                 id
-            }
+            },
+            cascade: true
         });
 
         if (result > 0) {
@@ -140,4 +147,46 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { login, createNewUser, changePassword, deleteUser };
+const getAllUsers = async (req, res) => {
+    try {
+        const allUsers = await User.findAll();
+        if (!allUsers) {
+            return res.status(400).json({
+                message: `Cannot fetch users`,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Request successful",
+            data: allUsers,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+const getSingleUser = async (req, res) => {
+    const userId = req.params.id
+    try {
+        const allUsers = await User.findOne({
+            id: userId
+        });
+        if (!allUsers) {
+            return res.status(400).json({
+                message: `Cannot fetch user`,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Request successful",
+            data: {
+                ...allUsers,
+                admin: allUsers.getSchool_Admin()
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+module.exports = { login, createNewUser, changePassword, deleteUser, getAllUsers, getSingleUser };
