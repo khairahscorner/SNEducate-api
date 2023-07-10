@@ -143,7 +143,10 @@ const getAllSchoolStaff = async (req, res) => {
 
         return res.status(200).json({
             message: "Request successful",
-            data: allStaff
+            data: {
+                count: allStaff.length,
+                staffs: allStaff
+            }
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
@@ -169,12 +172,52 @@ const getAllStaff = async (req, res) => {
 
         return res.status(200).json({
             message: "Request successful",
-            data: staffDetails,
+            data: {
+                count: staffDetails.length,
+                staff: staffDetails
+            },
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
     }
 }
+
+const updateStaff = async (req, res) => {
+    const staffId = req.params.staffId;
+
+    try {
+        const staff = await Staff.findByPk(staffId);
+        if (!staff) {
+            return res.status(400).json({
+                message: `Cannot update staff that does not exist`,
+                data: {
+                    staffId,
+                    ...req.body
+                }
+            });
+        }
+
+        staff.update(req.body, {
+            returning: true
+        }).then((result) => {
+            return res.status(200).json({
+                message: "Staff details updated successfully",
+                data: result.dataValues
+            });
+        })
+            .catch(() => {
+                return res.status(400).json({
+                    message: "Could not update staff details",
+                    data: {
+                        staffId: staff.dataValues.staff_id,
+                        ...req.body
+                    }
+                })
+            })
+    } catch (error) {
+        return res.status(500).send({ message: "Internal server error", error });
+    }
+};
 
 const deleteStaff = async (req, res) => {
     const id = req.params.staffId;
@@ -221,4 +264,11 @@ const generateActivationToken = async ({ userId, userType, isVerified }) => {
     );
 }
 
-module.exports = { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff };
+module.exports = {
+    createNewStaff,
+    getStaffDetails,
+    getAllSchoolStaff,
+    getAllStaff,
+    updateStaff,
+    deleteStaff
+};

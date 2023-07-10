@@ -103,34 +103,29 @@ const assignStudentToStaff = async (req, res) => {
 
 const getAllSchoolStudents = async (req, res) => {
     const { userId } = req.user;
+    const schoolId = req.params.schoolId;
     try {
         const currAdmin = await School_Admin.findOne({
             where: {
-                admin_id: userId
+                admin_id: userId,
+                school_id: schoolId
             }
         });
         if (!currAdmin) {
             return res.status(400).json({
                 message: `Cannot fetch list of students for an admin that does not exist`,
                 data: {
-                    admin_id: userId
+                    admin_id: userId,
+                    school_id: schoolId
                 }
             });
         }
         const school = await currAdmin.getSchool();
-        if (!school) {
-            return res.status(400).json({
-                message: `Cannot fetch list of students for a school that does not exist`,
-                data: {
-                    school_id: school.dataValues.school_id
-                }
-            });
-        }
         const results = await school.getStudents();
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
-                schoolId: school.dataValues.school_id,
+                count: results.length,
                 students: results
             },
         });
@@ -165,10 +160,32 @@ const getAllStaffStudents = async (req, res) => {
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
+                count: students.length,
                 students
             },
         });
 
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+const getAllStudents = async (req, res) => {
+    try {
+        const allStudents = await Student.findAll();
+        if (!allStudents) {
+            return res.status(400).json({
+                message: `Cannot fetch students`,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched students",
+            data: {
+                count: allStudents.length,
+                students: allStudents
+            },
+        });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
     }
@@ -326,6 +343,7 @@ module.exports = {
     assignStudentToStaff,
     getAllSchoolStudents,
     getAllStaffStudents,
+    getAllStudents,
     getStudentDetails,
     updateStudentDetails,
     deleteStudent

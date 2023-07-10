@@ -147,12 +147,52 @@ const getAllAdmins = async (req, res) => {
 
         return res.status(200).json({
             message: "Request successful",
-            data: allAdmins,
+            data: {
+                count: allAdmins.length,
+                admins: allAdmins
+            },
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
     }
 }
+
+const updateAdmin = async (req, res) => {
+    const adminId = req.params.adminId;
+
+    try {
+        const admin = await School_Admin.findByPk(adminId);
+        if (!admin) {
+            return res.status(400).json({
+                message: `Cannot update admin that does not exist`,
+                data: {
+                    adminId,
+                    ...req.body
+                }
+            });
+        }
+
+        admin.update(req.body, {
+            returning: true
+        }).then((result) => {
+            return res.status(200).json({
+                message: "School Admin details updated successfully",
+                data: result.dataValues
+            });
+        })
+            .catch(() => {
+                return res.status(400).json({
+                    message: "Could not update staadminff details",
+                    data: {
+                        adminId: admin.dataValues.admin_id,
+                        ...req.body
+                    }
+                })
+            })
+    } catch (error) {
+        return res.status(500).send({ message: "Internal server error", error });
+    }
+};
 
 const deleteAdmin = async (req, res) => {
     const id = req.params.adminId;
@@ -219,4 +259,11 @@ const generateActivationToken = async ({ userId, userType, isVerified }) => {
     );
 }
 
-module.exports = { createNewAdmin, getAdminDetails, getSingleAdmin, getAllAdmins, deleteAdmin };
+module.exports = {
+    createNewAdmin,
+    getAdminDetails,
+    getSingleAdmin,
+    getAllAdmins,
+    updateAdmin,
+    deleteAdmin
+};
