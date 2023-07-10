@@ -116,6 +116,12 @@ const getAllSchoolStaff = async (req, res) => {
                 message: `Cannot fetch staff of school that does not exist`,
             });
         }
+        const schlAdmin = await currSchool.getSchool_Admin();
+        if (schlAdmin.dataValues.school_id != schoolId) {
+            return res.status(400).json({
+                message: `Cannot fetch staff of school you're not an admin of`,
+            });
+        }
 
         let allStaff = await Staff.findAll({
             where: { school_id: schoolId }

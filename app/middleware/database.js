@@ -6,7 +6,7 @@ const sequelize = require("../../config/database");
 const School = require("../models/school");
 const School_Admin = require("../models/school_admin");
 const Staff = require("../models/staff");
-// const Student = require("../models/student");
+const Student = require("../models/student");
 // const Target = require("../models/target");
 // const Term_Curriculum = require("../models/term_curriculum");
 const User = require("../models/user");
@@ -24,8 +24,10 @@ School.hasOne(School_Admin, { foreignKey: { name: 'school_id', allowNull: false 
 Staff.belongsTo(School, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'school_id' });
 School.hasMany(Staff, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'school_id' });
 
-// Student.belongsTo(Staff, { foreignKey: 'staff_id', targetKey: 'staff_id' });
-// Staff.hasMany(Student, { foreignKey: 'staff_id', sourceKey: 'staff_id' })
+Student.belongsTo(School, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'school_id' });
+School.hasMany(Student, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'school_id' });
+Student.belongsTo(Staff, { foreignKey: 'staff_id', targetKey: 'staff_id' });
+Staff.hasMany(Student, { foreignKey: 'staff_id', sourceKey: 'staff_id' });
 
 // Assessment.belongsTo(Student, { foreignKey: 'student_id', targetKey: 'student_id' });
 // Student.hasMany(Assessment, { foreignKey: 'student_id', sourceKey: 'student_id' });
