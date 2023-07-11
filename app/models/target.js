@@ -13,8 +13,8 @@ Target.init({
         allowNull: false
     },
     title: { type: DataTypes.STRING, allowNull: false },
-    success_rating: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
-    prev_rating: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
+    success_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
+    prev_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
     notes: { type: DataTypes.TEXT },
 }, {
     sequelize,

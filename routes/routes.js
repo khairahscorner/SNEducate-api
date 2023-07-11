@@ -9,6 +9,7 @@ const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteS
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
 const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum } = require("../app/controllers/curriculumController");
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum } = require("../app/controllers/goalController");
+const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets } = require("../app/controllers/targetController");
 
 router.post("/login", login);
 router.post("/change-password", [verifyToken], changePassword);
@@ -46,18 +47,22 @@ router.get("/students/:schoolId", [verifyToken, isUserTypeAdmin], getAllSchoolSt
 router.get("/students/:schoolId/:staffId", [verifyToken, isUserTypeAdminOrStaff], getAllStaffStudents);
 router.get("/students", [verifyToken, isUserTypeDev], getAllStudents);
 
-router.post("/curriculum/:studentId/new", [verifyToken, isUserTypeStaff], createNewCurriculum);
+router.post("/curriculum/new", [verifyToken, isUserTypeStaff], createNewCurriculum);
 router.get("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], getCurriculumDetails);
 router.get("/curriculums/:studentId", [verifyToken, isUserTypeStaff], getAllStudentCurriculum);
 router.delete("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], deleteCurriculum);
 
-router.post("/goal/new/:curriculumId", [verifyToken, isUserTypeStaff], createNewGoal);
+router.post("/goal/new", [verifyToken, isUserTypeStaff], createNewGoal);
 router.post("/goal/:goalId", [verifyToken, isUserTypeStaff], addGoalToCurriculum);
 router.put("/goal/:goalId", [verifyToken, isUserTypeStaff], updateGoal);
 router.delete("/goal/:goalId", [verifyToken, isUserTypeStaff], deleteGoal);
 router.get("/goal/count/:goalId", [verifyToken, isUserTypeStaff], getGoalCurriculumCount);
 
-// authRouter.post("/route", [middlewares, validators], controller function);
+router.post("/target/new", [verifyToken, isUserTypeStaff], createNewTarget);
+router.get("/target/:targetId", [verifyToken, isUserTypeStaff], getTargetDetails);
+router.put("/target/:targetId", [verifyToken, isUserTypeStaff], updateTarget);
+router.delete("/target/:targetId", [verifyToken, isUserTypeStaff], deleteTarget);
+router.get("/targets/:goalId", [verifyToken, isUserTypeStaff], getGoalTargets);
 
 // authRouter.get("/users", () => { createAdmin() });
 
