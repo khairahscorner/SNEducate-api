@@ -294,7 +294,7 @@ const updateStudentDetails = async (req, res) => {
                     message: "Could not update student details",
                     data: {
                         studentId,
-                        ...req.body
+                        ...student.dataValues
                     }
                 })
             })

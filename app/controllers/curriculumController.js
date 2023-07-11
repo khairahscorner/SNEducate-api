@@ -3,8 +3,7 @@ const Term_Curriculum = require("../models/term_curriculum");
 const { newGoalFunc, getGoalDetails } = require("./goalController");
 
 const createNewCurriculum = async (req, res) => {
-    const { academic_year, term, goals } = req.body;
-    const studentId = req.params.studentId;
+    const { academic_year, term, goals, studentId } = req.body;
 
     try {
         const newCurriculum = await Term_Curriculum.create({

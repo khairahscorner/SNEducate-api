@@ -2,7 +2,7 @@ const Goal = require("../models/goal");
 const Term_Curriculum = require("../models/term_curriculum");
 
 const createNewGoal = async (req, res) => {
-    const curriculumId = req.params.curriculumId;
+    const { curriculumId, ...otherFields } = req.body;
 
     try {
         let curriculum = await Term_Curriculum.findOne({
@@ -18,7 +18,7 @@ const createNewGoal = async (req, res) => {
                 }
             });
         }
-        const newGoal = await Goal.create(req.body);
+        const newGoal = await Goal.create(otherFields);
         if (!newGoal) {
             return res.status(400).json({
                 message: `Cannot create new goal for the curriculum`,
