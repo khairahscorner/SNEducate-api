@@ -6,7 +6,7 @@ class Term_Curriculum extends Model {
 }
 
 Term_Curriculum.init({
-    iep_id: {
+    curriculum_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -16,8 +16,7 @@ Term_Curriculum.init({
     term: { type: DataTypes.STRING, allowNull: false },
     progress_rating: {
         type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false
+        defaultValue: 0
     }
 }, {
     sequelize,

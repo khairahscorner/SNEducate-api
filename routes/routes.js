@@ -7,6 +7,8 @@ const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middle
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
 const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff } = require("../app/controllers/staffController");
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
+const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum } = require("../app/controllers/curriculumController");
+const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum } = require("../app/controllers/goalController");
 
 router.post("/login", login);
 router.post("/change-password", [verifyToken], changePassword);
@@ -44,6 +46,16 @@ router.get("/students/:schoolId", [verifyToken, isUserTypeAdmin], getAllSchoolSt
 router.get("/students/:schoolId/:staffId", [verifyToken, isUserTypeAdminOrStaff], getAllStaffStudents);
 router.get("/students", [verifyToken, isUserTypeDev], getAllStudents);
 
+router.post("/curriculum/:studentId/new", [verifyToken, isUserTypeStaff], createNewCurriculum);
+router.get("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], getCurriculumDetails);
+router.get("/curriculums/:studentId", [verifyToken, isUserTypeStaff], getAllStudentCurriculum);
+router.delete("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], deleteCurriculum);
+
+router.post("/goal/new/:curriculumId", [verifyToken, isUserTypeStaff], createNewGoal);
+router.post("/goal/:goalId", [verifyToken, isUserTypeStaff], addGoalToCurriculum);
+router.put("/goal/:goalId", [verifyToken, isUserTypeStaff], updateGoal);
+router.delete("/goal/:goalId", [verifyToken, isUserTypeStaff], deleteGoal);
+router.get("/goal/count/:goalId", [verifyToken, isUserTypeStaff], getGoalCurriculumCount);
 
 // authRouter.post("/route", [middlewares, validators], controller function);
 

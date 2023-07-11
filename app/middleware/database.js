@@ -2,13 +2,13 @@ const sequelize = require("../../config/database");
 
 //ensure to import all models
 // const Assessment = require("../models/assessment");
-// const Goal = require("../models/goal");
+const Goal = require("../models/goal");
 const School = require("../models/school");
 const School_Admin = require("../models/school_admin");
 const Staff = require("../models/staff");
 const Student = require("../models/student");
 // const Target = require("../models/target");
-// const Term_Curriculum = require("../models/term_curriculum");
+const Term_Curriculum = require("../models/term_curriculum");
 const User = require("../models/user");
 
 //associations
@@ -26,17 +26,19 @@ School.hasMany(Staff, { foreignKey: { name: 'school_id', allowNull: false }, onD
 
 Student.belongsTo(School, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'school_id' });
 School.hasMany(Student, { foreignKey: { name: 'school_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'school_id' });
+
 Student.belongsTo(Staff, { foreignKey: 'staff_id', targetKey: 'staff_id' });
 Staff.hasMany(Student, { foreignKey: 'staff_id', sourceKey: 'staff_id' });
 
+Term_Curriculum.belongsTo(Student, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'student_id' });
+Student.hasMany(Term_Curriculum, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'student_id' });
+
+// many to many rel. here because of the importing goals into new curriculums feature
+Goal.belongsToMany(Term_Curriculum, { through: 'CurriculumGoals', foreignKey: 'goalId', otherKey: 'curriculumId' });
+Term_Curriculum.belongsToMany(Goal, { through: 'CurriculumGoals', foreignKey: 'curriculumId', otherKey: 'goalId' });
+
 // Assessment.belongsTo(Student, { foreignKey: 'student_id', targetKey: 'student_id' });
 // Student.hasMany(Assessment, { foreignKey: 'student_id', sourceKey: 'student_id' });
-
-// Term_Curriculum.belongsTo(Student, { foreignKey: 'student_id', targetKey: 'student_id' });
-// Student.hasMany(Term_Curriculum, { foreignKey: 'student_id', sourceKey: 'student_id' });
-
-// Goal.belongsTo(Term_Curriculum, { foreignKey: 'iep_id', targetKey: 'iep_id' });
-// Term_Curriculum.hasMany(Goal, { foreignKey: 'iep_id', sourceKey: 'iep_id' });
 
 // Target.belongsTo(Goal, { foreignKey: 'goal_id', targetKey: 'goal_id' });
 // Goal.hasMany(Target, { foreignKey: 'goal_id', sourceKey: 'goal_id' });

@@ -12,12 +12,12 @@ Goal.init({
         autoIncrement: true,
         allowNull: false
     },
-    title: { type: DataTypes.STRING, allowNull: false },
+    target: { type: DataTypes.STRING, allowNull: false },
     focus_area: { type: DataTypes.STRING, allowNull: false },
     success_criteria: { type: DataTypes.STRING },
     latest_eval: { type: DataTypes.TEXT },
     strategy: { type: DataTypes.TEXT, allowNull: false },
-    success_rating: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
+    success_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
 }, {
     sequelize,
     modelName: 'Goal'
