@@ -7,8 +7,8 @@ const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middle
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
 const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff } = require("../app/controllers/staffController");
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
-const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum } = require("../app/controllers/curriculumController");
-const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum } = require("../app/controllers/goalController");
+const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum, updateCurriculum } = require("../app/controllers/curriculumController");
+const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
 const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets } = require("../app/controllers/targetController");
 
 router.post("/login", login);
@@ -49,14 +49,19 @@ router.get("/students", [verifyToken, isUserTypeDev], getAllStudents);
 
 router.post("/curriculum/new", [verifyToken, isUserTypeStaff], createNewCurriculum);
 router.get("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], getCurriculumDetails);
+router.put("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], updateCurriculum);
 router.get("/curriculums/:studentId", [verifyToken, isUserTypeStaff], getAllStudentCurriculum);
 router.delete("/curriculum/:curriculumId", [verifyToken, isUserTypeStaff], deleteCurriculum);
 
 router.post("/goal/new", [verifyToken, isUserTypeStaff], createNewGoal);
-router.post("/goal/:goalId", [verifyToken, isUserTypeStaff], addGoalToCurriculum);
+router.get("/goal/:goalId", [verifyToken, isUserTypeStaff], getGoal);
 router.put("/goal/:goalId", [verifyToken, isUserTypeStaff], updateGoal);
 router.delete("/goal/:goalId", [verifyToken, isUserTypeStaff], deleteGoal);
 router.get("/goal/count/:goalId", [verifyToken, isUserTypeStaff], getGoalCurriculumCount);
+router.post("/goals/new", [verifyToken, isUserTypeStaff], createNewGoals);
+router.get("/goals/:curriculumId", [verifyToken, isUserTypeStaff], getCurriculumGoals);
+router.post("/goal", [verifyToken, isUserTypeStaff], addGoalToCurriculum);
+router.post("/goals", [verifyToken, isUserTypeStaff], addGoalsToCurriculum);
 
 router.post("/target/new", [verifyToken, isUserTypeStaff], createNewTarget);
 router.get("/target/:targetId", [verifyToken, isUserTypeStaff], getTargetDetails);

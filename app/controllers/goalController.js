@@ -39,6 +39,167 @@ const createNewGoal = async (req, res) => {
     }
 }
 
+const createNewGoals = async (req, res) => {
+    const { goals, curriculumId } = req.body;
+
+    try {
+        let curriculum = await Term_Curriculum.findOne({
+            where: {
+                curriculum_id: curriculumId
+            }
+        })
+        if (!curriculum) {
+            return res.status(400).json({
+                message: `Cannot create goals for curriculum that does not exist`,
+                data: {
+                    curriculumId
+                }
+            });
+        }
+
+        const allGoals = await Promise.all(goals.map(async (goalDetails) => {
+            const newGoal = await Goal.create(goalDetails);
+            if (!newGoal) {
+                return res.status(400).json({
+                    message: `Error creating goals for curriculum`,
+                    data: goalDetails
+                });
+            }
+            return newGoal;
+        }));
+
+        await curriculum.addGoals(allGoals);
+
+        return res.status(200).json({
+            message: "Successfully created new goals for curriculum",
+            data: {
+                curriculumId,
+                goals: allGoals.map((goal) => goal.dataValues)
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+const addGoalToCurriculum = async (req, res) => {
+    const { curriculumId, goalId } = req.body;
+
+    try {
+        let curriculum = await Term_Curriculum.findOne({
+            where: {
+                curriculum_id: curriculumId
+            }
+        })
+        if (!curriculum) {
+            return res.status(400).json({
+                message: `Cannot add goal to curriculum that does not exist`,
+                data: {
+                    curriculumId
+                }
+            });
+        }
+        const goal = await Goal.findOne({
+            where: {
+                goal_id: goalId
+            }
+        })
+        if (!goal) {
+            return res.status(400).json({
+                message: `Cannot add goal that does not exist to the curriculum`,
+                curriculumId,
+                goalId
+            });
+        }
+        await curriculum.addGoal(goal);
+        return res.status(200).json({
+            message: "Goal added successfully to curriculum",
+            data: {
+                curriculumId,
+                goal: goal.dataValues
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+const addGoalsToCurriculum = async (req, res) => {
+    const { curriculumId, goalIds } = req.body;
+
+    try {
+        let curriculum = await Term_Curriculum.findOne({
+            where: {
+                curriculum_id: curriculumId
+            }
+        })
+        if (!curriculum) {
+            return res.status(400).json({
+                message: `Cannot add goals to curriculum that does not exist`,
+                data: {
+                    curriculumId
+                }
+            });
+        }
+
+        const allGoals = await Promise.all(goalIds.map(async (goalId) => {
+            const goal = await Goal.findOne({
+                where: {
+                    goal_id: goalId
+                }
+            })
+            if (!goal) {
+                return res.status(400).json({
+                    message: `Cannot add goal that does not exist to the curriculum`,
+                    curriculumId,
+                    goalId
+                });
+            }
+            return goal;
+        }));
+
+        await curriculum.addGoals(allGoals);
+
+        return res.status(200).json({
+            message: "Successfully added the goals for curriculum",
+            data: {
+                curriculumId,
+                goalIds
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
+const getGoal = async (req, res) => {
+    const goalId = req.params.goalId;
+
+    try {
+        const goal = await Goal.findOne({
+            where: {
+                goal_id: goalId
+            }
+        })
+        if (!goal) {
+            return res.status(400).json({
+                message: `Cannot fetch details of goal that does not exist`,
+                data: {
+                    goalId
+                }
+            });
+        }
+        return res.status(200).json({
+            message: "Successfully fetched goal details",
+            data: {
+                ...goal.dataValues
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error });
+    }
+}
+
 const updateGoal = async (req, res) => {
     const goalId = req.params.goalId;
     try {
@@ -76,9 +237,8 @@ const updateGoal = async (req, res) => {
     }
 }
 
-const addGoalToCurriculum = async (req, res) => {
-    const { curriculumId } = req.body;
-    const goalId = req.params.goalId;
+const getCurriculumGoals = async (req, res) => {
+    const curriculumId = req.params.curriculumId;
 
     try {
         let curriculum = await Term_Curriculum.findOne({
@@ -88,31 +248,20 @@ const addGoalToCurriculum = async (req, res) => {
         })
         if (!curriculum) {
             return res.status(400).json({
-                message: `Cannot add goal to curriculum that does not exist`,
+                message: `Cannot fetch goals of curriculum that does not exist`,
                 data: {
                     curriculumId
                 }
             });
         }
-        const goal = await Goal.findOne({
-            where: {
-                goal_id: goalId
-            }
-        })
-        if (!goal) {
-            return res.status(400).json({
-                message: `Cannot add goal that does not exist to the curriculum`,
-                curriculumId,
-                goalId
-            });
-        }
-        await curriculum.addGoal(goal);
+        const allGoals = await curriculum.getGoals({ joinTableAttributes: [] });
+
         return res.status(200).json({
-            message: "Goal added successfully to curriculum",
+            message: "Successfully fetched goals of the curriculum",
             data: {
                 curriculumId,
-                goal: goal.dataValues
-            }
+                goals: allGoals
+            },
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
@@ -173,45 +322,14 @@ const deleteGoal = async (req, res) => {
     }
 }
 
-//functions
-// both used in curriculumController
-const newGoalFunc = async (details) => {
-    try {
-        const newGoal = await Goal.create(details);
-        if (!newGoal) {
-            throw new Error("Error creating goal");
-        }
-        return newGoal;
-    } catch (error) {
-        throw new Error("Error creating goal");
-    }
-}
-const getGoalDetails = async (goalId) => {
-    try {
-        const goal = await Goal.findOne({
-            where: {
-                goal_id: goalId
-            }
-        })
-        if (!goal) {
-            return res.status(400).json({
-                message: `Cannot get details of goal that does not exist`,
-                goalId
-            });
-        }
-        return goal;
-    } catch (error) {
-        throw new Error("Error fetching goal details")
-    }
-}
-// end
-
 module.exports = {
-    newGoalFunc,
     createNewGoal,
+    createNewGoals,
     addGoalToCurriculum,
-    getGoalDetails,
+    addGoalsToCurriculum,
+    getGoal,
     updateGoal,
+    getCurriculumGoals,
     getGoalCurriculumCount,
     deleteGoal
 }

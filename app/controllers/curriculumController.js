@@ -1,9 +1,7 @@
-const Goal = require("../models/goal");
 const Term_Curriculum = require("../models/term_curriculum");
-const { newGoalFunc, getGoalDetails } = require("./goalController");
 
 const createNewCurriculum = async (req, res) => {
-    const { academic_year, term, goals, studentId } = req.body;
+    const { academic_year, term, studentId } = req.body;
 
     try {
         const newCurriculum = await Term_Curriculum.create({
@@ -19,32 +17,12 @@ const createNewCurriculum = async (req, res) => {
             });
         }
 
-        if (goals.length === 0) {
-            return res.status(400).json({
-                message: `Cannot create curriculum without goals`,
-                data: req.body
-            });
-        }
-        else {
-            const assignedGoals = await Promise.all(goals.map(async (goal) => {
-                if (goal.id) {
-                    console.log("exists");
-                    return await getGoalDetails(goal.id);
-                } else {
-                    return await newGoalFunc(goal);
-                }
-            }));
-
-            await newCurriculum.addGoals(assignedGoals);
-
-            return res.status(200).json({
-                message: "Successfully created curriculum",
-                data: {
-                    ...newCurriculum.dataValues,
-                    goals: assignedGoals.map((goal) => goal.dataValues)
-                },
-            });
-        }
+        return res.status(200).json({
+            message: "Successfully created curriculum",
+            data: {
+                ...newCurriculum.dataValues
+            },
+        });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server error", error });
     }
@@ -160,7 +138,7 @@ const updateCurriculum = async (req, res) => {
             });
         }
 
-        goal.update(req.body, {
+        curriculum.update(req.body, {
             returning: true
         }).then((result) => {
             return res.status(200).json({
@@ -168,13 +146,10 @@ const updateCurriculum = async (req, res) => {
                 data: result.dataValues
             });
         })
-            .catch(() => {
+            .catch((error) => {
                 return res.status(400).json({
                     message: "Could not update curriculum",
-                    data: {
-                        goalId,
-                        ...req.body
-                    }
+                    error
                 })
             })
     } catch (error) {
@@ -185,6 +160,7 @@ const updateCurriculum = async (req, res) => {
 module.exports = {
     createNewCurriculum,
     getCurriculumDetails,
+    updateCurriculum,
     deleteCurriculum,
     getAllStudentCurriculum
 }

@@ -18,7 +18,16 @@ Target.init({
     notes: { type: DataTypes.TEXT },
 }, {
     sequelize,
-    modelName: 'Target'
+    modelName: 'Target',
+    hooks: {
+        beforeUpdate: async (target, options) => {
+            const originalTarget = await Target.findByPk(target.target_id);
+
+            if (originalTarget.goal_id !== target.goal_id) {
+                throw new Error('Updating goal_id is not allowed');
+            }
+        }
+    }
 });
 
 module.exports = Target;
