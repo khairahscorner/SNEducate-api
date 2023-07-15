@@ -20,7 +20,7 @@ const doesEmailExists = async (req, res, next) => {
     }
     catch (error) {
         console.log(error)
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -39,7 +39,7 @@ const isUserActivated = async (req, res, next) => {
     }
     catch (error) {
         console.log(error)
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 

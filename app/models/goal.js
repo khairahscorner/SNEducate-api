@@ -20,7 +20,16 @@ Goal.init({
     success_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
 }, {
     sequelize,
-    modelName: 'Goal'
+    modelName: 'Goal',
+    hooks: {
+        beforeUpdate: async (goal, options) => {
+            const originalGoal = await Goal.findByPk(goal.goal_id);
+
+            if (originalGoal.student_id !== goal.student_id) {
+                throw new Error('Updating student_id of the goal is not allowed');
+            }
+        }
+    }
 });
 
 module.exports = Goal;

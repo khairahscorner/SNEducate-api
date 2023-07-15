@@ -33,6 +33,9 @@ Staff.hasMany(Student, { foreignKey: 'staff_id', sourceKey: 'staff_id' });
 Term_Curriculum.belongsTo(Student, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'student_id' });
 Student.hasMany(Term_Curriculum, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'student_id' });
 
+Goal.belongsTo(Student, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', targetKey: 'student_id' });
+Student.hasMany(Goal, { foreignKey: { name: 'student_id', allowNull: false }, onDelete: 'CASCADE', sourceKey: 'student_id' });
+
 // many to many rel. here because of the importing goals into new curriculums feature
 Goal.belongsToMany(Term_Curriculum, { through: 'CurriculumGoals', foreignKey: 'goalId', otherKey: 'curriculumId' });
 Term_Curriculum.belongsToMany(Goal, { through: 'CurriculumGoals', foreignKey: 'curriculumId', otherKey: 'goalId' });

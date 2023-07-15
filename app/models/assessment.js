@@ -13,16 +13,23 @@ Assessment.init({
         allowNull: false
     },
     week: { type: DataTypes.INTEGER, allowNull: false },
-    targets_addressed: { type: DataTypes.JSON, allowNull: false },
     term: { type: DataTypes.STRING, allowNull: false },
-    updated_ratings: { type: DataTypes.JSON, allowNull: false },
-    prev_ratings: { type: DataTypes.JSON, allowNull: false },
-    baseline_summary:  { type: DataTypes.TEXT, allowNull: false },
-    improvement:  { type: DataTypes.TEXT, allowNull: false },
-    comments: DataTypes.TEXT,  
+    targets_ratings: { type: DataTypes.JSON, allowNull: false },
+    baseline_summary: { type: DataTypes.TEXT, allowNull: false },
+    improvement: { type: DataTypes.TEXT, allowNull: false },
+    comments: DataTypes.TEXT,
 }, {
     sequelize,
-    modelName: 'Assessment'
+    modelName: 'Assessment',
+    hooks: {
+        beforeUpdate: async (assessment, options) => {
+            const originalAssessment = await Assessment.findByPk(assessment.id);
+
+            if (originalAssessment.student_id !== assessment.student_id) {
+                throw new Error('Updating student_id of the assessment is not allowed');
+            }
+        }
+    }
 });
 
 module.exports = Assessment;

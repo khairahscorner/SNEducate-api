@@ -1,20 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const { login, createNewUser, deleteUser, changePassword, getAllUsers } = require("../app/controllers/userController");
+
+const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middleware/auth');
+const { login, createNewUser, deleteUser, changePassword, getAllUsers, getSingleUser } = require("../app/controllers/userController");
 const { createSchool, updateSchool, getSchoolDetails, getAllSchools, deleteSchool } = require("../app/controllers/schoolController");
 const { createNewAdmin, getSingleAdmin, getAdminDetails, getAllAdmins, deleteAdmin, updateAdmin } = require("../app/controllers/adminController");
-const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middleware/auth');
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
 const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff } = require("../app/controllers/staffController");
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
 const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum, updateCurriculum } = require("../app/controllers/curriculumController");
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
 const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets } = require("../app/controllers/targetController");
+const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updateAssessment, deleteAssessment } = require("../app/controllers/assessmentController");
 
 router.post("/login", login);
 router.post("/change-password", [verifyToken], changePassword);
 router.post("/user/signup", doesEmailExists, createNewUser);
 router.delete("/user/delete/:id", deleteUser);
+router.get("/user", [verifyToken], getSingleUser);
 router.get("/users", [verifyToken, isUserTypeDev], getAllUsers);
 
 router.post("/school/new", [verifyToken, isUserTypeDev], createSchool);
@@ -69,6 +72,10 @@ router.put("/target/:targetId", [verifyToken, isUserTypeStaff], updateTarget);
 router.delete("/target/:targetId", [verifyToken, isUserTypeStaff], deleteTarget);
 router.get("/targets/:goalId", [verifyToken, isUserTypeStaff], getGoalTargets);
 
-// authRouter.get("/users", () => { createAdmin() });
+router.post("/assessment/new", [verifyToken, isUserTypeStaff], createNewAssessment);
+router.get("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], getSingleAssessment);
+router.put("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], updateAssessment);
+router.delete("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], deleteAssessment);
+router.get("/assessments/:studentId", [verifyToken, isUserTypeStaff], getAllStudentAssessment);
 
 module.exports = router;
