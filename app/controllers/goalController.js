@@ -18,7 +18,7 @@ const createNewGoal = async (req, res) => {
                 }
             });
         }
-        const newGoal = await Goal.create(otherFields);
+        const newGoal = await Goal.create({ student_id: curriculum.dataValues.student_id, ...otherFields });
         if (!newGoal) {
             return res.status(400).json({
                 message: `Cannot create new goal for the curriculum`,
@@ -35,7 +35,7 @@ const createNewGoal = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -58,7 +58,7 @@ const createNewGoals = async (req, res) => {
         }
 
         const allGoals = await Promise.all(goals.map(async (goalDetails) => {
-            const newGoal = await Goal.create(goalDetails);
+            const newGoal = await Goal.create({ student_id: curriculum.dataValues.student_id, ...goalDetails });
             if (!newGoal) {
                 return res.status(400).json({
                     message: `Error creating goals for curriculum`,
@@ -78,7 +78,7 @@ const createNewGoals = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -120,7 +120,7 @@ const addGoalToCurriculum = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -168,7 +168,7 @@ const addGoalsToCurriculum = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -196,7 +196,7 @@ const getGoal = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -233,7 +233,7 @@ const updateGoal = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -264,7 +264,7 @@ const getCurriculumGoals = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 // note, to for the FE, check if goal belongs to more than one curriculum
@@ -292,7 +292,7 @@ const getGoalCurriculumCount = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -318,7 +318,7 @@ const deleteGoal = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 

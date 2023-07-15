@@ -34,7 +34,7 @@ const createNewTarget = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -71,7 +71,7 @@ const updateTarget = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -96,7 +96,7 @@ const getTargetDetails = async (req, res) => {
             }
         })
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -124,7 +124,7 @@ const getGoalTargets = async (req, res) => {
             }
         })
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -159,7 +159,7 @@ const deleteTarget = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 

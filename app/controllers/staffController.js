@@ -75,7 +75,7 @@ const createNewStaff = async (req, res) => {
             }
         }
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -103,7 +103,7 @@ const getStaffDetails = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -149,7 +149,7 @@ const getAllSchoolStaff = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -178,7 +178,7 @@ const getAllStaff = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -215,7 +215,7 @@ const updateStaff = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -250,7 +250,7 @@ const deleteStaff = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 

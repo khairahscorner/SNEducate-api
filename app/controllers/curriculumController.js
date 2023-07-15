@@ -24,7 +24,7 @@ const createNewCurriculum = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -55,7 +55,7 @@ const getCurriculumDetails = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -89,11 +89,12 @@ const getAllStudentCurriculum = async (req, res) => {
             message: "Successfully fetched all curriculum of the student",
             data: {
                 studentId,
+                count: allCurriculumWithGoals.length,
                 curriculums: allCurriculumWithGoals
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -118,7 +119,7 @@ const deleteCurriculum = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -153,7 +154,7 @@ const updateCurriculum = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 

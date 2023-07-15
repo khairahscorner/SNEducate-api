@@ -32,7 +32,7 @@ const createSchool = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -69,7 +69,7 @@ const updateSchool = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -98,7 +98,7 @@ const getSchoolDetails = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -129,7 +129,7 @@ const getAllSchools = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -176,7 +176,7 @@ const deleteSchool = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 

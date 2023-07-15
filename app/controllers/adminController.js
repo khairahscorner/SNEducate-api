@@ -75,7 +75,7 @@ const createNewAdmin = async (req, res) => {
             }
         }
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -103,7 +103,7 @@ const getAdminDetails = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -132,7 +132,7 @@ const getSingleAdmin = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -153,7 +153,7 @@ const getAllAdmins = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -190,7 +190,7 @@ const updateAdmin = async (req, res) => {
                 })
             })
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -225,7 +225,7 @@ const deleteAdmin = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 

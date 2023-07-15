@@ -22,7 +22,7 @@ const createNewUser = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -63,7 +63,7 @@ const login = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
 
@@ -107,7 +107,7 @@ const changePassword = async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 
 }
@@ -143,7 +143,7 @@ const deleteUser = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.status(500).send({ message: "Internal server error", error });
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 }
 
@@ -161,31 +161,41 @@ const getAllUsers = async (req, res) => {
             data: allUsers,
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
 const getSingleUser = async (req, res) => {
-    const userId = req.params.id
+    const { userId } = req.user
     try {
-        const allUsers = await User.findOne({
-            id: userId
+        const user = await User.findOne({
+            where: {
+                id: userId
+            }
         });
-        if (!allUsers) {
+        if (!user) {
             return res.status(400).json({
                 message: `Cannot fetch user`,
             });
         }
 
+        let otherDetails;
+        if (user.user_type === "school_admin") {
+            otherDetails = await user.getSchool_Admin();
+        }
+        else if (user.user_type === "staff") {
+            otherDetails = await user.getStaff();
+        }
+
         return res.status(200).json({
             message: "Request successful",
             data: {
-                ...allUsers,
-                admin: allUsers.getSchool_Admin()
+                ...user.dataValues,
+                "type": otherDetails
             },
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server error", error });
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
 
