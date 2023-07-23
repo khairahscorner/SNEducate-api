@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middleware/auth');
 const { login, createNewUser, deleteUser, changePassword, getAllUsers, getSingleUser } = require("../app/controllers/userController");
@@ -77,5 +78,22 @@ router.get("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], getSingl
 router.put("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], updateAssessment);
 router.delete("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], deleteAssessment);
 router.get("/assessments/:studentId", [verifyToken, isUserTypeStaff], getAllStudentAssessment);
+
+
+router.get("/authenticate", (req, res) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorised - no token' });
+    }
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Unauthorised - Invalid token' });
+        }
+        return res.status(200).json({
+            message: "User token validated",
+            user: decoded
+        });
+    });
+})
 
 module.exports = router;
