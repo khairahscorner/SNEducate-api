@@ -1,20 +1,25 @@
 require('dotenv').config();
+const envConfig = require('./config');
 const Sequelize = require("sequelize");
 
+const env = process.env.NODE_ENV || 'development';
+const config = envConfig[env];
+
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USERNAME,
-    process.env.DB_PASSWORD,
+    config.database,
+    config.username,
+    config.password,
     {
-        host: process.env.DB_HOST,
-        dialect: 'mysql',
+        host: config.host,
+        port: config.port,
+        dialect: config.dialect,
         pool: {
             max: 5,
             min: 0,
             acquire: 30000,
             idle: 10000
         },
-        logging: false
+        // logging: false
     }
 );
 
