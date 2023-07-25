@@ -32,8 +32,8 @@ School.init({
     },
     shortcode: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        // allowNull: false,
+        // unique: true
     },
     framework: {
         type: DataTypes.INTEGER,

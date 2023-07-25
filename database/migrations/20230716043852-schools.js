@@ -28,8 +28,8 @@ module.exports = {
       },
       shortcode: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
+        // allowNull: false,
+        // unique: true,
       },
       framework: {
         type: Sequelize.INTEGER,
