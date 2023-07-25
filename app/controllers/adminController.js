@@ -96,9 +96,12 @@ const getAdminDetails = async (req, res) => {
                 }
             });
         }
+
+        const user = await currAdmin.getUser();
         return res.status(200).json({
             message: "Successfully fetched profile",
             data: {
+                email: user.dataValues.email,
                 ...currAdmin.dataValues
             },
         });
@@ -125,9 +128,11 @@ const getSingleAdmin = async (req, res) => {
             });
         }
 
+        const user = await admin.getUser();
         return res.status(200).json({
             message: "Request successful",
             data: {
+                email: user.dataValues.email,
                 ...admin.dataValues
             },
         });
@@ -138,12 +143,21 @@ const getSingleAdmin = async (req, res) => {
 
 const getAllAdmins = async (req, res) => {
     try {
-        const allAdmins = await School_Admin.findAll();
+        let allAdmins = await School_Admin.findAll();
         if (!allAdmins) {
             return res.status(400).json({
                 message: `Cannot fetch admins`,
             });
         }
+
+        allAdmins = await Promise.all(allAdmins.map(async (admin) => {
+            let user = await admin.getUser();
+            console.log(user)
+            return {
+                email: user.dataValues.email,
+                ...admin.dataValues
+            };
+        }));
 
         return res.status(200).json({
             message: "Request successful",

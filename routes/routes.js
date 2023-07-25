@@ -7,7 +7,7 @@ const { login, createNewUser, deleteUser, changePassword, getAllUsers, getSingle
 const { createSchool, updateSchool, getSchoolDetails, getAllSchools, deleteSchool } = require("../app/controllers/schoolController");
 const { createNewAdmin, getSingleAdmin, getAdminDetails, getAllAdmins, deleteAdmin, updateAdmin } = require("../app/controllers/adminController");
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
-const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff } = require("../app/controllers/staffController");
+const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff, getSingleStaff } = require("../app/controllers/staffController");
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
 const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum, updateCurriculum } = require("../app/controllers/curriculumController");
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
@@ -36,6 +36,7 @@ router.get("/admins", [verifyToken, isUserTypeDev], getAllAdmins);
 // router.post("/mail", sendMail);
 
 router.post("/staff/new", [verifyToken, isUserTypeAdmin, doesEmailExists], createNewStaff);
+router.get("/staff/:id", [verifyToken, isUserTypeAdmin], getSingleStaff);
 router.put("/staff/:staffId", [verifyToken, isUserTypeAdminOrStaff], updateStaff);
 router.delete("/staff/:staffId", [verifyToken, isUserTypeAdmin], deleteStaff);
 router.get("/staff", [verifyToken, isUserTypeStaff, isUserActivated], getStaffDetails);

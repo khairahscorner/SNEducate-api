@@ -96,10 +96,43 @@ const getStaffDetails = async (req, res) => {
                 }
             });
         }
+        const user = await currStaff.getUser();
         return res.status(200).json({
             message: "Successfully fetched profile",
             data: {
+                email: user.dataValues.email,
                 ...currStaff.dataValues
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
+    }
+}
+
+const getSingleStaff = async (req, res) => {
+    const staffId = req.params.id;
+
+    try {
+        const staff = await Staff.findOne({
+            where: {
+                staff_id: staffId
+            }
+        });
+        if (!staff) {
+            return res.status(400).json({
+                message: `Cannot get staff details`,
+                data: {
+                    staffId
+                }
+            });
+        }
+
+        const user = await staff.getUser();
+        return res.status(200).json({
+            message: "Request successful",
+            data: {
+                email: user.dataValues.email,
+                ...staff.dataValues
             },
         });
     } catch (error) {
@@ -267,6 +300,7 @@ const generateActivationToken = async ({ userId, userType, isVerified }) => {
 module.exports = {
     createNewStaff,
     getStaffDetails,
+    getSingleStaff,
     getAllSchoolStaff,
     getAllStaff,
     updateStaff,

@@ -92,9 +92,9 @@ const getSchoolDetails = async (req, res) => {
             message: "Request successful",
             data: {
                 ...school.dataValues,
-                schoolAdmin: {
+                schoolAdmin: schoolAdmin ? {
                     ...schoolAdmin.dataValues
-                }
+                } : null
             },
         });
     } catch (error) {
@@ -113,13 +113,21 @@ const getAllSchools = async (req, res) => {
             });
         }
 
-        const allSchoolsAndAdmins = schools.map((school) => {
+        const allSchoolsAndAdmins = await Promise.all(schools.map(async (school) => {
             const { School_Admin, ...rest } = school.dataValues;
+            let user;
+
+            if (School_Admin) {
+                user = await User.findByPk(School_Admin.admin_id);
+            }
             return {
                 ...rest,
-                adminDetails: School_Admin,
+                adminDetails: user ? {
+                    email: user?.dataValues?.email,
+                    ...School_Admin?.dataValues,
+                }: null,
             };
-        });
+        }));
 
         return res.status(200).json({
             message: "Request successful",
