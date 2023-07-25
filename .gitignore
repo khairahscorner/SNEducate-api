@@ -1,5 +1,6 @@
 *.controller.js
 *.model.js
+*.zip
 
 .DS_Store
 

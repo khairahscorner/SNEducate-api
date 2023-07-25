@@ -125,7 +125,7 @@ const getAllSchools = async (req, res) => {
                 adminDetails: user ? {
                     email: user?.dataValues?.email,
                     ...School_Admin?.dataValues,
-                }: null,
+                } : null,
             };
         }));
 
@@ -155,18 +155,23 @@ const deleteSchool = async (req, res) => {
         }
 
         let staffResults = await school.getStaffs()
-        staffIds = staffResults.map((staff) => staff.dataValues.staff_id);
         let adminResult = await school.getSchool_Admin();
-        let adminId = adminResult.dataValues.admin_id;
+        let adminId;
+        let staffIds;
 
-        await User.destroy({
-            where: {
-                id: {
-                    [Op.in]: staffIds,
-                }
-            },
-        })
-        if (adminId) {
+        if (staffResults) {
+            staffIds = staffResults.map((staff) => staff.dataValues.staff_id);
+            await User.destroy({
+                where: {
+                    id: {
+                        [Op.in]: staffIds,
+                    }
+                },
+            })
+        }
+
+        if (adminResult) {
+            adminId = adminResult.dataValues.admin_id;
             await User.destroy({
                 where: {
                     id: adminId,
