@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // only to directly create root admins - devs for the platform
@@ -66,6 +67,39 @@ const login = async (req, res) => {
         return res.status(500).send({ message: "Internal Server error", error: error.message });
     }
 };
+
+const validateActivation = async (req, res) => {
+    const { token } = req.body;
+    let userDetails;
+
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Unauthorised - Invalid token' });
+        }
+        userDetails = decoded;
+    });
+
+    const user = await User.findOne({
+        where: {
+            id: userDetails?.userId
+        }
+    });
+    if (!user) {
+        return res.status(400).json({
+            message: `Cannot validate the activation token - no user found`,
+        });
+    }
+    if (user.dataValues?.isVerified) {
+        return res.status(400).json({
+            message: `User already activated`,
+        });
+    }
+
+    return res.status(200).json({
+        message: "Activation token validated",
+        user: userDetails
+    });
+}
 
 const changePassword = async (req, res) => {
     // user object added to req from decoding token via middleware
@@ -199,4 +233,4 @@ const getSingleUser = async (req, res) => {
     }
 }
 
-module.exports = { login, createNewUser, changePassword, deleteUser, getAllUsers, getSingleUser };
+module.exports = { login, createNewUser, changePassword, deleteUser, getAllUsers, getSingleUser, validateActivation };

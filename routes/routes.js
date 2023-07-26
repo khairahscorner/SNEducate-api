@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 const { verifyToken, doesEmailExists, isUserActivated } = require('../app/middleware/auth');
-const { login, createNewUser, deleteUser, changePassword, getAllUsers, getSingleUser } = require("../app/controllers/userController");
+const { login, createNewUser, changePassword, getAllUsers, getSingleUser, validateActivation } = require("../app/controllers/userController");
 const { createSchool, updateSchool, getSchoolDetails, getAllSchools, deleteSchool } = require("../app/controllers/schoolController");
 const { createNewAdmin, getSingleAdmin, getAdminDetails, getAllAdmins, deleteAdmin, updateAdmin } = require("../app/controllers/adminController");
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
@@ -15,9 +15,10 @@ const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTa
 const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updateAssessment, deleteAssessment } = require("../app/controllers/assessmentController");
 
 router.post("/login", login);
+router.post("/validate-token", validateActivation)
 router.post("/change-password", [verifyToken], changePassword);
 router.post("/user/signup", doesEmailExists, createNewUser);
-router.delete("/user/delete/:id", deleteUser);
+// router.delete("/user/delete/:id", deleteUser); //block this later
 router.get("/user", [verifyToken], getSingleUser);
 router.get("/users", [verifyToken, isUserTypeDev], getAllUsers);
 
