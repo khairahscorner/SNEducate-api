@@ -70,18 +70,18 @@ const login = async (req, res) => {
 
 const validateActivation = async (req, res) => {
     const { token } = req.body;
-    let userDetails;
+    let activationDetails;
 
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: 'Unauthorised - Invalid token' });
         }
-        userDetails = decoded;
+        activationDetails = decoded;
     });
 
     const user = await User.findOne({
         where: {
-            id: userDetails?.userId
+            id: activationDetails?.userId
         }
     });
     if (!user) {
@@ -90,14 +90,18 @@ const validateActivation = async (req, res) => {
         });
     }
     if (user.dataValues?.isVerified) {
-        return res.status(400).json({
-            message: `User already activated`,
+        return res.status(200).json({
+            message: "User already activated",
+            user: {
+                userId: user.dataValues?.userId,
+                isVerified: user.dataValues?.isVerified
+            }
         });
     }
 
     return res.status(200).json({
         message: "Activation token validated",
-        user: userDetails
+        user: activationDetails
     });
 }
 
