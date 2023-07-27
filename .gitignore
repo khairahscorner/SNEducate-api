@@ -1,6 +1,8 @@
 *.controller.js
 *.model.js
 *.zip
+*.pem
+*.crt
 
 .DS_Store
 
@@ -139,3 +141,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+.ebextensions
