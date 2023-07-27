@@ -82,7 +82,7 @@ const getSchoolDetails = async (req, res) => {
             return res.status(400).json({
                 message: `Cannot get school details`,
                 data: {
-                    adminId
+                    schoolId
                 }
             });
         }
