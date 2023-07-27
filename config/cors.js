@@ -12,7 +12,7 @@ const corsOptions = {
   origin: allowedOrigins,
   methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false,
+  credentials: true,
 };
 
 module.exports = cors(corsOptions);
