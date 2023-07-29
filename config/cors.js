@@ -5,6 +5,7 @@ const allowedOrigins = [
   `http://localhost:${process.env.PORT}`,
   process.env.PROD_API_URL,
   process.env.PROD_FRONTEND_URL,
+  process.env.ALT_PROD_FRONTEND_URL,
   process.env.FRONTEND_URL
 ]
 
