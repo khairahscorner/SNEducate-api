@@ -100,11 +100,14 @@ const getStaffDetails = async (req, res) => {
             });
         }
         const user = await currStaff.getUser();
+        const schoolDetails = await currStaff.getSchool();
+
         return res.status(200).json({
             message: "Successfully fetched profile",
             data: {
                 email: user.dataValues.email,
-                ...currStaff.dataValues
+                ...currStaff.dataValues,
+                schoolDetails
             },
         });
     } catch (error) {
