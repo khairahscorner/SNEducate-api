@@ -170,10 +170,12 @@ const getAllSchoolStaff = async (req, res) => {
 
         allStaff = await Promise.all(allStaff.map(async staff => {
             const userDetails = await staff.getUser();
+            const studentCount = await staff.countStudents();
             return {
                 ...staff.dataValues,
                 email: userDetails.dataValues.email,
-                isVerified: userDetails.dataValues.isVerified
+                isVerified: userDetails.dataValues.isVerified,
+                studentCount
             };
         }));
 
