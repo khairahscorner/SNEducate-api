@@ -101,11 +101,14 @@ const getAdminDetails = async (req, res) => {
         }
 
         const user = await currAdmin.getUser();
+        const schoolDetails = await currAdmin.getSchool();
+
         return res.status(200).json({
             message: "Successfully fetched profile",
             data: {
                 email: user.dataValues.email,
-                ...currAdmin.dataValues
+                ...currAdmin.dataValues,
+                schoolDetails
             },
         });
     } catch (error) {
