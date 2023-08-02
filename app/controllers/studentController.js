@@ -122,11 +122,26 @@ const getAllSchoolStudents = async (req, res) => {
         }
         const school = await currAdmin.getSchool();
         const results = await school.getStudents();
+        let studentsWithStaff = await Promise.all(results.map(async (student) => {
+            let staff = await student.getStaff();
+            let user;
+            if (staff) {
+                user = await staff.getUser();
+            }
+
+            return {
+                ...student.dataValues,
+                staffDetails: staff ? {
+                    email: user?.dataValues?.email,
+                    ...staff?.dataValues,
+                } : null,
+            };
+        }));
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
-                count: results.length,
-                students: results
+                count: studentsWithStaff.length,
+                students: studentsWithStaff
             },
         });
     } catch (error) {
