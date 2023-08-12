@@ -137,11 +137,25 @@ const getAllSchoolStudents = async (req, res) => {
                 } : null,
             };
         }));
+        const gradeCounts = {
+            blue: 0,
+            green: 0,
+            red: 0,
+            yellow: 0,
+            null: 0
+        };
+
+        studentsWithStaff.forEach(student => {
+            const colorGrade = student.grade_color || 'null';
+            gradeCounts[colorGrade]++;
+        });
+
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
                 count: studentsWithStaff.length,
-                students: studentsWithStaff
+                students: studentsWithStaff,
+                stats: [gradeCounts.green, gradeCounts.blue, gradeCounts.yellow, gradeCounts.red, gradeCounts.null]
             },
         });
     } catch (error) {
@@ -171,12 +185,25 @@ const getAllStaffStudents = async (req, res) => {
         }
 
         const students = await staff.getStudents();
+        const gradeCounts = {
+            blue: 0,
+            green: 0,
+            red: 0,
+            yellow: 0,
+            null: 0
+        };
+
+        students.forEach(student => {
+            const colorGrade = student.grade_color || 'null';
+            gradeCounts[colorGrade]++;
+        });
 
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
                 count: students.length,
-                students
+                students,
+                stats: [gradeCounts.green, gradeCounts.blue, gradeCounts.yellow, gradeCounts.red, gradeCounts.null]
             },
         });
 

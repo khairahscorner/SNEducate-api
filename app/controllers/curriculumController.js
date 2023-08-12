@@ -45,7 +45,14 @@ const getCurriculumDetails = async (req, res) => {
                 }
             });
         }
-        const allGoals = await curriculum.getGoals({ joinTableAttributes: [] });
+        let allGoals = await curriculum.getGoals({ joinTableAttributes: [] });
+        allGoals = await Promise.all(allGoals.map(async (goal) => {
+            let targets = await goal.getTargets();
+            return {
+                ...goal.dataValues,
+                targets: targets.map((target) => target.dataValues)
+            };
+        }));
 
         return res.status(200).json({
             message: "Successfully fetched curriculum details",
@@ -79,9 +86,18 @@ const getAllStudentCurriculum = async (req, res) => {
 
         const allCurriculumWithGoals = await Promise.all(allCurriculum.map(async (curr) => {
             let goals = await curr.getGoals({ joinTableAttributes: [] });
+
+            goals = await Promise.all(goals.map(async (goal) => {
+                let targets = await goal.getTargets();
+                return {
+                    ...goal.dataValues,
+                    targets: targets.map((target) => target.dataValues)
+                };
+            }));
+
             return {
                 ...curr.dataValues,
-                goals: goals.map((goal) => goal.dataValues)
+                goals
             };
         }));
 
