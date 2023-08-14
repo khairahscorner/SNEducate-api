@@ -13,6 +13,7 @@ Assessment.init({
         allowNull: false
     },
     week: { type: DataTypes.INTEGER, allowNull: false },
+    academic_year: { type: DataTypes.STRING, allowNull: false },
     term: { type: DataTypes.STRING, allowNull: false },
     targets_ratings: { type: DataTypes.JSON, allowNull: false },
     baseline_summary: { type: DataTypes.TEXT, allowNull: false },

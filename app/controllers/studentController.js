@@ -193,16 +193,35 @@ const getAllStaffStudents = async (req, res) => {
             null: 0
         };
 
-        students.forEach(student => {
+        const allStudents = await Promise.all(students.map(async student => {
             const colorGrade = student.grade_color || 'null';
             gradeCounts[colorGrade]++;
-        });
+
+            let goals = await student.getGoals();
+            let goalCount = goals.length;
+            let targetCount = 0;
+
+            if (goalCount > 0) {
+                const allTargets = await Promise.all(goals.map(async (goal) => {
+                    let targets = await goal.getTargets();
+                    return targets.map((target) => target.dataValues);
+                }));
+                targetCount = allTargets.flat().length;
+            }
+
+            return {
+                ...student.dataValues,
+                goalCount,
+                targetCount
+            };
+        }));
+
 
         return res.status(200).json({
             message: "Successfully fetched students",
             data: {
                 count: students.length,
-                students,
+                students: allStudents,
                 stats: [gradeCounts.green, gradeCounts.blue, gradeCounts.yellow, gradeCounts.red, gradeCounts.null]
             },
         });

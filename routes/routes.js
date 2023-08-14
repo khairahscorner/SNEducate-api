@@ -11,7 +11,7 @@ const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteS
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
 const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum, updateCurriculum } = require("../app/controllers/curriculumController");
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
-const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets } = require("../app/controllers/targetController");
+const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets, getStudentTargets } = require("../app/controllers/targetController");
 const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updateAssessment, deleteAssessment } = require("../app/controllers/assessmentController");
 
 router.post("/login", login);
@@ -74,6 +74,7 @@ router.get("/target/:targetId", [verifyToken, isUserTypeStaff], getTargetDetails
 router.put("/target/:targetId", [verifyToken, isUserTypeStaff], updateTarget);
 router.delete("/target/:targetId", [verifyToken, isUserTypeStaff], deleteTarget);
 router.get("/targets/:goalId", [verifyToken, isUserTypeStaff], getGoalTargets);
+router.get("/targets/all/:studentId", [verifyToken, isUserTypeStaff], getStudentTargets);
 
 router.post("/assessment/new", [verifyToken, isUserTypeStaff], createNewAssessment);
 router.get("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], getSingleAssessment);

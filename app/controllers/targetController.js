@@ -128,6 +128,36 @@ const getGoalTargets = async (req, res) => {
     }
 }
 
+const getStudentTargets = async (req, res) => {
+    const studentId = req.params.studentId;
+    try {
+        const goals = await Goal.findAll({
+            where: {
+                student_id: studentId
+            }
+        })
+        if (!goals) {
+            return res.status(400).json({
+                message: `Cannot fetch targets for student`,
+                studentId
+            });
+        }
+        const allTargets = await Promise.all(goals.map(async (goal) => {
+            let targets = await goal.getTargets();
+            return targets.map((target) => target.dataValues)
+        }));
+
+        return res.status(200).json({
+            message: "Successfully fetched targets",
+            data: {
+                allTargets: allTargets.flat()
+            }
+        })
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server error", error: error.message });
+    }
+}
+
 const deleteTarget = async (req, res) => {
     const targetId = req.params.targetId;
     try {
@@ -168,5 +198,6 @@ module.exports = {
     getTargetDetails,
     updateTarget,
     deleteTarget,
-    getGoalTargets
+    getGoalTargets,
+    getStudentTargets
 };
