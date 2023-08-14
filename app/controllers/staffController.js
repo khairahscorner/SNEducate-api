@@ -75,6 +75,14 @@ const createNewStaff = async (req, res) => {
                         },
                     });
                 }
+                else {
+                    return res.status(400).json({
+                        message: `Could not send email to staff`,
+                        data: {
+                            ...newStaff.dataValues
+                        }
+                    });
+                }
             }
         }
     } catch (error) {
