@@ -28,14 +28,14 @@ const createNewAssessment = async (req, res) => {
                 }
             });
         }
-        if (otherFields?.targets_ratings.length === 0) {
-            return res.status(400).json({
-                message: `Cannot create assessment without targets addressed`,
-                data: {
-                    ...req.body
-                }
-            });
-        }
+        // if (otherFields?.targets_ratings.length === 0) {
+        //     return res.status(400).json({
+        //         message: `Cannot create assessment without targets addressed`,
+        //         data: {
+        //             ...req.body
+        //         }
+        //     });
+        // }
 
         const newAssessment = await Assessment.create({
             student_id: studentId,
@@ -43,7 +43,7 @@ const createNewAssessment = async (req, res) => {
         });
         if (!newAssessment) {
             return res.status(400).json({
-                message: `Cannot create assessment for a student not assigned to you`,
+                message: `Cannot create assessment`,
                 data: {
                     userId,
                     studentId
