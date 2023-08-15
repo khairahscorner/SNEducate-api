@@ -13,6 +13,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      academic_year: {
+        type: DataTypes.STRING, 
+        allowNull: false
+      },
       term: {
         type: Sequelize.STRING,
         allowNull: false,
