@@ -122,21 +122,6 @@ const getAllSchoolStudents = async (req, res) => {
         }
         const school = await currAdmin.getSchool();
         const results = await school.getStudents();
-        let studentsWithStaff = await Promise.all(results.map(async (student) => {
-            let staff = await student.getStaff();
-            let user;
-            if (staff) {
-                user = await staff.getUser();
-            }
-
-            return {
-                ...student.dataValues,
-                staffDetails: staff ? {
-                    email: user?.dataValues?.email,
-                    ...staff?.dataValues,
-                } : null,
-            };
-        }));
         const gradeCounts = {
             blue: 0,
             green: 0,
@@ -145,10 +130,46 @@ const getAllSchoolStudents = async (req, res) => {
             null: 0
         };
 
-        studentsWithStaff.forEach(student => {
-            const colorGrade = student.grade_color || 'null';
+        let studentsWithStaff = await Promise.all(results.map(async (student) => {
+            let goals = await student.getGoals();
+            let goalRatings = [];
+            let currRating = 0;
+
+            if (goals.length > 0) {
+                await Promise.all(goals.map(async (goal) => {
+                    let targets = await goal.getTargets();
+                    targets = targets.map((target) => target.dataValues)
+                    goalRatings.push(calcGoalRating(targets))
+                }));
+                currRating = calcCurrRating(goalRatings)
+            }
+            const colorGrade =
+                currRating > 0 && currRating < 25
+                    ? "red"
+                    : currRating >= 25 && currRating < 50
+                        ? "yellow"
+                        : currRating >= 50 && currRating < 75
+                            ? "blue"
+                            : currRating >= 75 && currRating <= 100
+                                ? "green"
+                                : "null"
+            student.grade_color = colorGrade;
             gradeCounts[colorGrade]++;
-        });
+            await student.save();
+
+            let staff = await student.getStaff();
+            let user;
+            if (staff) {
+                user = await staff.getUser();
+            }
+            return {
+                ...student.dataValues,
+                staffDetails: staff ? {
+                    email: user?.dataValues?.email,
+                    ...staff?.dataValues,
+                } : null,
+            };
+        }));
 
         return res.status(200).json({
             message: "Successfully fetched students",
@@ -194,20 +215,36 @@ const getAllStaffStudents = async (req, res) => {
         };
 
         const allStudents = await Promise.all(students.map(async student => {
-            const colorGrade = student.grade_color || 'null';
-            gradeCounts[colorGrade]++;
-
             let goals = await student.getGoals();
             let goalCount = goals.length;
             let targetCount = 0;
+            let goalRatings = [];
+            let currRating = 0;
 
             if (goalCount > 0) {
                 const allTargets = await Promise.all(goals.map(async (goal) => {
                     let targets = await goal.getTargets();
-                    return targets.map((target) => target.dataValues);
+                    targets = targets.map((target) => target.dataValues);
+                    goalRatings.push(calcGoalRating(targets));
+                    return targets;
                 }));
+                currRating = calcCurrRating(goalRatings)
                 targetCount = allTargets.flat().length;
             }
+
+            const colorGrade =
+                currRating > 0 && currRating < 25
+                    ? "red"
+                    : currRating >= 25 && currRating < 50
+                        ? "yellow"
+                        : currRating >= 50 && currRating < 75
+                            ? "blue"
+                            : currRating >= 75 && currRating <= 100
+                                ? "green"
+                                : "null"
+            student.grade_color = colorGrade;
+            gradeCounts[colorGrade]++;
+            await student.save();
 
             return {
                 ...student.dataValues,
@@ -300,6 +337,28 @@ const getStudentDetails = async (req, res) => {
         return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
+
+const calcGoalRating = (targets) => {
+    let totalRating = 0;
+    if (targets.length > 0) {
+        targets.forEach((tar) => {
+            totalRating += tar.success_rating;
+        });
+        return Math.round(totalRating / targets.length);
+    }
+    return totalRating;
+};
+
+const calcCurrRating = (goalRatings) => {
+    let totalRating = 0;
+    if (goalRatings.length > 0) {
+        goalRatings.forEach((rating) => {
+            totalRating += rating;
+        });
+        return Math.round(totalRating / goalRatings.length);
+    }
+    return totalRating;
+};
 
 const updateStudentDetails = async (req, res) => {
     const studentId = req.params.studentId;

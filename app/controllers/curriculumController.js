@@ -84,16 +84,23 @@ const getAllStudentCurriculum = async (req, res) => {
             });
         }
 
-        const allCurriculumWithGoals = await Promise.all(allCurriculum.map(async (curr) => {
+        let allCurriculumWithGoals = await Promise.all(allCurriculum.map(async (curr) => {
             let goals = await curr.getGoals({ joinTableAttributes: [] });
 
             goals = await Promise.all(goals.map(async (goal) => {
                 let targets = await goal.getTargets();
+                targets = targets.map((target) => target.dataValues);
+                goal.success_rating = calcGoalRating(targets);
+                await goal.save()
+
                 return {
                     ...goal.dataValues,
-                    targets: targets.map((target) => target.dataValues)
+                    targets
                 };
             }));
+
+            curr.progress_rating = calcCurrRating(goals);
+            await curr.save();
 
             return {
                 ...curr.dataValues,
@@ -173,6 +180,28 @@ const updateCurriculum = async (req, res) => {
         return res.status(500).json({ message: "Internal Server error", error: error.message });
     }
 }
+
+const calcGoalRating = (targets) => {
+    let totalRating = 0;
+    if (targets.length > 0) {
+        targets.forEach((tar) => {
+            totalRating += tar.success_rating;
+        });
+        return Math.round(totalRating / targets.length);
+    }
+    return totalRating;
+};
+
+const calcCurrRating = (goals) => {
+    let totalRating = 0;
+    if (goals.length > 0) {
+        goals.forEach((goal) => {
+            totalRating += calcGoalRating(goal.targets);
+        });
+        return Math.round(totalRating / goals.length);
+    }
+    return totalRating;
+};
 
 module.exports = {
     createNewCurriculum,

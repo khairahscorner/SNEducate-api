@@ -158,7 +158,6 @@ const getAllAdmins = async (req, res) => {
 
         allAdmins = await Promise.all(allAdmins.map(async (admin) => {
             let user = await admin.getUser();
-            console.log(user)
             return {
                 email: user.dataValues.email,
                 ...admin.dataValues
