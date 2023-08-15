@@ -7,7 +7,7 @@ const { login, createNewUser, changePassword, getAllUsers, getSingleUser, valida
 const { createSchool, updateSchool, getSchoolDetails, getAllSchools, deleteSchool } = require("../app/controllers/schoolController");
 const { createNewAdmin, getSingleAdmin, getAdminDetails, getAllAdmins, deleteAdmin, updateAdmin } = require("../app/controllers/adminController");
 const { isUserTypeDev, isUserTypeAdmin, isUserTypeStaff, isUserTypeDevOrAdmin, isUserTypeAdminOrStaff } = require('../app/middleware/userTypes');
-const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff, getSingleStaff } = require("../app/controllers/staffController");
+const { createNewStaff, getStaffDetails, getAllSchoolStaff, getAllStaff, deleteStaff, updateStaff, getSingleStaff, resetUserPassword } = require("../app/controllers/staffController");
 const { createNewStudent, assignStudentToStaff, deleteStudent, getAllSchoolStudents, getAllStaffStudents, updateStudentDetails, getStudentDetails, getAllStudents } = require("../app/controllers/studentController");
 const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, deleteCurriculum, updateCurriculum } = require("../app/controllers/curriculumController");
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
@@ -17,6 +17,7 @@ const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updat
 router.post("/login", login);
 router.post("/validate-token", validateActivation)
 router.post("/change-password", [verifyToken], changePassword);
+router.get("/reset-password/:userId", [verifyToken, isUserTypeAdmin], resetUserPassword);
 router.post("/user/signup", doesEmailExists, createNewUser);
 // router.delete("/user/delete/:id", deleteUser); //block this later
 router.get("/user", [verifyToken], getSingleUser);

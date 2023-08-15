@@ -13,9 +13,13 @@ const transporter = nodemailer.createTransport({
 });
 
 
-exports.sendActivationEmail = async (details) => {
+exports.sendActivationEmail = async (details, template) => {
+    let maildir = 'activation.html';
+    if (template) {
+        maildir = template
+    }
     try {
-        const templatePath = path.join(__dirname, 'mail-templates', 'activation.html');
+        const templatePath = path.join(__dirname, 'mail-templates', maildir);
         const emailTemplate = fs.readFileSync(templatePath, 'utf-8');
 
         let html = emailTemplate;
@@ -28,7 +32,7 @@ exports.sendActivationEmail = async (details) => {
         await transporter.sendMail({
             from: process.env.OUTLOOK_EMAIL,
             to: details.email,
-            subject: 'New Account - SNEducate',
+            subject: details.subject ? details.subject : 'New Account - SNEducate',
             html,
         })
         console.log('Email sent successfully');
