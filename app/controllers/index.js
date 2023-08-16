@@ -63,6 +63,7 @@ const getStudentReport = async (req, res) => {
             data: {
                 schoolName: school.dataValues.name,
                 generatedBy: staff.dataValues.first_name + " " + staff.dataValues.last_name,
+                generatedAt: new Date(),
                 studentId,
                 generatedFor: student.dataValues.first_name + " " + student.dataValues.last_name,
                 session: curriculum.dataValues.academic_year + ", " + curriculum.dataValues.term,
@@ -103,11 +104,11 @@ const getGroupReport = async (req, res) => {
         staffStudents = staffStudents.map((student) => student.dataValues);
         if (staffStudents.length > 0) {
             staffStudents.forEach((student) => {
-                student.grade_color == "yellow" ? groups.yellowGroup.push({ student_id: student.student_id, rating: student.current_rating }) :
-                    student.grade_color == "green" ? groups.greenGroup.push({ student_id: student.student_id, rating: student.current_rating }) :
-                        student.grade_color == "blue" ? groups.blueGroup.push({ student_id: student.student_id, rating: student.current_rating }) :
-                            student.grade_color == "red" ? groups.redGroup.push({ student_id: student.student_id, rating: student.current_rating }) :
-                                groups.ungraded.push({ student_id: student.student_id, rating: student.current_rating });
+                student.grade_color == "yellow" ? groups.yellowGroup.push({ studentName: student.first_name + " " + student.last_name, rating: student.current_rating }) :
+                    student.grade_color == "green" ? groups.greenGroup.push({ studentName: student.first_name + " " + student.last_name, rating: student.current_rating }) :
+                        student.grade_color == "blue" ? groups.blueGroup.push({ studentName: student.first_name + " " + student.last_name, rating: student.current_rating }) :
+                            student.grade_color == "red" ? groups.redGroup.push({ studentName: student.first_name + " " + student.last_name, rating: student.current_rating }) :
+                                groups.ungraded.push({ studentName: student.first_name + " " + student.last_name, rating: student.current_rating });
             });
         }
 
@@ -118,6 +119,7 @@ const getGroupReport = async (req, res) => {
             data: {
                 schoolName: school.dataValues.name,
                 generatedBy: staff.dataValues.first_name + " " + staff.dataValues.last_name,
+                generatedAt: new Date(),
                 studentCount: staffStudents.length,
                 groups,
             }
@@ -179,6 +181,7 @@ const getSchoolReport = async (req, res) => {
                 schoolId: admin.school_id,
                 schoolName: school.dataValues.name,
                 generatedBy: admin.dataValues.first_name + " " + admin.dataValues.last_name,
+                generatedAt: new Date(),
                 staffCount: schoolStaff.length,
                 totalStudentCount,
                 groups,
