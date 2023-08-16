@@ -79,7 +79,6 @@ const getStudentReport = async (req, res) => {
 
 const getGroupReport = async (req, res) => {
     const { userId } = req.user;
-    const { academic_year, term } = req.body;
     try {
         const staff = await Staff.findOne({
             where: {
@@ -119,7 +118,6 @@ const getGroupReport = async (req, res) => {
             data: {
                 schoolName: school.dataValues.name,
                 generatedBy: staff.dataValues.first_name + " " + staff.dataValues.last_name,
-                session: academic_year + ", " + term,
                 studentCount: staffStudents.length,
                 groups,
             }

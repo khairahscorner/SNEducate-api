@@ -85,7 +85,7 @@ router.delete("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], delet
 router.get("/assessments/:studentId", [verifyToken, isUserTypeStaff], getAllStudentAssessment);
 
 router.post("/report/student/:studentId", [verifyToken, isUserTypeStaff], getStudentReport);
-router.post("/report/staff", [verifyToken, isUserTypeStaff], getGroupReport);
+router.get("/report/staff", [verifyToken, isUserTypeStaff], getGroupReport);
 router.get("/report/school", [verifyToken, isUserTypeAdmin], getSchoolReport);
 
 
