@@ -152,7 +152,8 @@ const getAllSchoolStudents = async (req, res) => {
                             ? "blue"
                             : currRating >= 75 && currRating <= 100
                                 ? "green"
-                                : "null"
+                                : "null";
+            student.current_rating = currRating;
             student.grade_color = colorGrade;
             gradeCounts[colorGrade]++;
             await student.save();
@@ -231,7 +232,6 @@ const getAllStaffStudents = async (req, res) => {
                 currRating = calcCurrRating(goalRatings)
                 targetCount = allTargets.flat().length;
             }
-
             const colorGrade =
                 currRating > 0 && currRating < 25
                     ? "red"
@@ -241,7 +241,8 @@ const getAllStaffStudents = async (req, res) => {
                             ? "blue"
                             : currRating >= 75 && currRating <= 100
                                 ? "green"
-                                : "null"
+                                : "null";
+            student.current_rating = currRating;
             student.grade_color = colorGrade;
             gradeCounts[colorGrade]++;
             await student.save();

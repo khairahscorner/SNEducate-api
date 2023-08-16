@@ -13,6 +13,7 @@ const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, dele
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
 const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets, getStudentTargets } = require("../app/controllers/targetController");
 const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updateAssessment, deleteAssessment } = require("../app/controllers/assessmentController");
+const { getGroupReport, getSchoolReport, getStudentReport } = require("../app/controllers");
 
 router.post("/login", login);
 router.post("/validate-token", validateActivation)
@@ -82,6 +83,10 @@ router.get("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], getSingl
 router.put("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], updateAssessment);
 router.delete("/assessment/:assessmentId", [verifyToken, isUserTypeStaff], deleteAssessment);
 router.get("/assessments/:studentId", [verifyToken, isUserTypeStaff], getAllStudentAssessment);
+
+router.post("/report/student/:studentId", [verifyToken, isUserTypeStaff], getStudentReport);
+router.post("/report/staff", [verifyToken, isUserTypeStaff], getGroupReport);
+router.get("/report/school", [verifyToken, isUserTypeAdmin], getSchoolReport);
 
 
 router.get("/authenticate", (req, res) => {

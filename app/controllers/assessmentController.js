@@ -1,5 +1,6 @@
 const Student = require('../models/student');
 const Assessment = require('../models/assessment');
+const Target = require('../models/target');
 
 const createNewAssessment = async (req, res) => {
     const { studentId, ...otherFields } = req.body;
@@ -50,6 +51,23 @@ const createNewAssessment = async (req, res) => {
                 }
             });
         }
+
+        otherFields.targets_ratings.forEach(async (tar) => {
+            let target = await Target.findByPk(tar.target_id)
+            if (!target) {
+                await newAssessment.destroy();
+                return res.status(400).json({
+                    message: `Cannot create assessment with targets that do not exist`,
+                    data: {
+                        ...tar
+                    }
+                });
+            }
+            target.prev_rating = tar.prev_rating;
+            target.success_rating = tar.success_rating;
+            await target.save();
+        })
+
         return res.status(200).json({
             message: "Assessment created successfully",
             data: {
@@ -171,15 +189,31 @@ const updateAssessment = async (req, res) => {
                 }
             });
         }
-        if (!req.body?.targets_ratings || req.body?.targets_ratings.length === 0) {
-            return res.status(400).json({
-                message: `Cannot update assessment without any targets addressed`,
-                data: {
-                    ...req.body
-                }
-            });
-        }
+        // if (!req.body?.targets_ratings || req.body?.targets_ratings.length === 0) {
+        //     return res.status(400).json({
+        //         message: `Cannot update assessment without any targets addressed`,
+        //         data: {
+        //             ...req.body
+        //         }
+        //     });
+        // }
 
+        if (req.body?.targets_ratings && req.body?.targets_ratings.length > 0) {
+            req.body.targets_ratings.forEach(async (tar) => {
+                let target = await Target.findByPk(tar.target_id)
+                if (!target) {
+                    return res.status(400).json({
+                        message: `Cannot update assessment with targets that do not exist`,
+                        data: {
+                            ...tar
+                        }
+                    });
+                }
+                target.prev_rating = tar.prev_rating;
+                target.success_rating = tar.success_rating;
+                await target.save();
+            })
+        }
 
         assessment.update(req.body, {
             returning: true

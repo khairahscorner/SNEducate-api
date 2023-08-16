@@ -30,6 +30,7 @@ module.exports = {
       contact_email: Sequelize.STRING,
       contact_phone: Sequelize.STRING,
       grade_color: Sequelize.STRING,
+      current_rating: Sequelize.INTEGER,
       school_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

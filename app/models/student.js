@@ -21,7 +21,11 @@ Student.init({
     grade_color: {
         type: DataTypes.STRING,
         defaultValue: null
-    }
+    },
+    current_rating: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
 }, {
     sequelize,
     modelName: 'Student',
