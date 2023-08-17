@@ -192,8 +192,67 @@ const getSchoolReport = async (req, res) => {
     }
 };
 
+const getStaffDashboardStats = async (req, res) => {
+    const { userId } = req.user;
+    try {
+        const staff = await Staff.findOne({
+            where: {
+                staff_id: userId
+            }
+        });
+        if (!staff) {
+            return res.status(400).json({
+                message: "Cannot get dashboard stats for unauthorised staff",
+            });
+        }
+
+        let staffStudents = await staff.getStudents();
+        let allCurriculumCount = 0;
+        let allAssessmentCount = 0;
+
+        await Promise.all(staffStudents.map(async (student) => {
+            let currCount = await student.countTerm_Curriculums();
+            let assessmentCount = await student.countAssessments();
+            allCurriculumCount += currCount;
+            allAssessmentCount += assessmentCount;
+        }));
+
+        const gradeCounts = {
+            blue: 0,
+            green: 0,
+            red: 0,
+            yellow: 0,
+            null: 0
+        };
+
+        staffStudents = staffStudents.map((student) => student.dataValues);
+        if (staffStudents.length > 0) {
+            staffStudents.forEach((student) => {
+                student.grade_color == "yellow" ? gradeCounts["yellow"]++ :
+                    student.grade_color == "green" ? gradeCounts["green"]++ :
+                        student.grade_color == "blue" ? gradeCounts["blue"]++ :
+                            student.grade_color == "red" ? gradeCounts["red"]++ :
+                                gradeCounts["null"]++;
+            });
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched dashboard stats",
+            data: {
+                studentCount: staffStudents.length,
+                curriculumCount: allCurriculumCount,
+                assessmentCount: allAssessmentCount,
+                gradeCounts,
+            }
+        });
+    } catch (error) {
+        return res.status(500).send({ message: "Internal Server error", error: error.message });
+    }
+};
+
 module.exports = {
     getStudentReport,
     getGroupReport,
-    getSchoolReport
+    getSchoolReport,
+    getStaffDashboardStats
 };

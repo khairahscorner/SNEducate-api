@@ -13,7 +13,7 @@ const { createNewCurriculum, getCurriculumDetails, getAllStudentCurriculum, dele
 const { updateGoal, getGoalCurriculumCount, deleteGoal, createNewGoal, addGoalToCurriculum, getGoal, getCurriculumGoals, addGoalsToCurriculum, createNewGoals } = require("../app/controllers/goalController");
 const { createNewTarget, updateTarget, getTargetDetails, deleteTarget, getGoalTargets, getStudentTargets } = require("../app/controllers/targetController");
 const { createNewAssessment, getAllStudentAssessment, getSingleAssessment, updateAssessment, deleteAssessment } = require("../app/controllers/assessmentController");
-const { getGroupReport, getSchoolReport, getStudentReport } = require("../app/controllers");
+const { getGroupReport, getSchoolReport, getStudentReport, getStaffDashboardStats } = require("../app/controllers");
 
 router.post("/login", login);
 router.post("/validate-token", validateActivation)
@@ -23,6 +23,7 @@ router.post("/user/signup", doesEmailExists, createNewUser);
 // router.delete("/user/delete/:id", deleteUser); //block this later
 router.get("/user", [verifyToken], getSingleUser);
 router.get("/users", [verifyToken, isUserTypeDev], getAllUsers);
+router.get("/dashboard/staff", [verifyToken, isUserTypeStaff], getStaffDashboardStats);
 
 router.post("/school/new", [verifyToken, isUserTypeDev], createSchool);
 router.put("/school/:schoolId", [verifyToken, isUserTypeDevOrAdmin], updateSchool);
