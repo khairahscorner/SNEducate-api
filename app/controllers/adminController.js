@@ -236,7 +236,7 @@ const deleteAdmin = async (req, res) => {
             }
         })
         if (result > 0) {
-            return res.json({
+            return res.status(200).json({
                 message: "Successfully deleted school admin",
                 data: {
                     ...admin.dataValues

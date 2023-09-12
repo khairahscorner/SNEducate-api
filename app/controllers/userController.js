@@ -127,7 +127,7 @@ const changePassword = async (req, res) => {
 
         const isCurrPasswordValid = await user.verifyPassword(oldPassword);
         if (!isCurrPasswordValid) {
-            return res.json({
+            return res.status(400).json({
                 message: "Cannot update password - incorrect password",
             });
         }
@@ -138,7 +138,7 @@ const changePassword = async (req, res) => {
         }
         await user.save();
 
-        return res.json({
+        return res.status(200).json({
             message: "Successfully changed password",
             data: {
                 ...user.dataValues
@@ -173,7 +173,7 @@ const deleteUser = async (req, res) => {
         });
 
         if (result > 0) {
-            return res.json({
+            return res.status(200).json({
                 message: "Successfully deleted user",
                 data: {
                     email: user.email,
