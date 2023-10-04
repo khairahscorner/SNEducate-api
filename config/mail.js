@@ -41,3 +41,5 @@ exports.sendActivationEmail = async (details, template) => {
         throw new Error('Error sending verification email');
     }
 };
+
+//Help: https://www.youtube.com/watch?v=abw96dX-3bs, Nodemailer docs https://nodemailer.com/about/
