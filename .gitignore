@@ -133,6 +133,7 @@ dist
 .tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
+.vscode
 .vscode-test
 
 # yarn v2
@@ -148,3 +149,9 @@ dist
 !.elasticbeanstalk/*.global.yml
 
 .ebextensions
+
+#IaC
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
