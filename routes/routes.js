@@ -19,8 +19,8 @@ router.post("/login", login);
 router.post("/validate-token", validateActivation)
 router.post("/change-password", [verifyToken], changePassword);
 router.get("/reset-password/:userId", [verifyToken, isUserTypeAdmin], resetUserPassword);
-router.post("/user/signup", doesEmailExists, createNewUser);
-// router.delete("/user/delete/:id", deleteUser); //block this later
+// router.post("/user/signup", doesEmailExists, createNewUser);
+// router.delete("/user/delete/:id", deleteUser);
 router.get("/user", [verifyToken], getSingleUser);
 router.get("/users", [verifyToken, isUserTypeDev], getAllUsers);
 router.get("/dashboard/staff", [verifyToken, isUserTypeStaff], getStaffDashboardStats);

@@ -50,9 +50,11 @@ const connection = () => {
     try {
         sequelize.authenticate().then(() => {
             console.log('connection established successfully.');
-            sequelize.sync().then(() => {
-                console.log('All models synced successfully!');
-            })
+            if (process.env.NODE_ENV === 'development') {
+                sequelize.sync().then(() => {
+                    console.log('All models synced successfully!');
+                })
+            }
         }).catch((error) => {
             console.error('Error connecting to database: ', error);
         });
